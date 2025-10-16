@@ -4,9 +4,6 @@
 #include <set>
 #include <functional>
 
-// ============================================
-// Интерфейс наблюдателя
-// ============================================
 template <typename T>
 class IObserver
 {
@@ -15,9 +12,6 @@ public:
     virtual ~IObserver() = default;
 };
 
-// ============================================
-// Интерфейс наблюдаемого объекта
-// ============================================
 template <typename T>
 class IObservable
 {
@@ -28,9 +22,7 @@ public:
     virtual void RemoveObserver(IObserver<T>& observer) = 0;
 };
 
-// ============================================
-// Реализация наблюдаемого объекта с приоритетами
-// ============================================
+
 template <class T>
 class CObservable : public IObservable<T>
 {
@@ -42,16 +34,39 @@ public:
     // --------------------------------------------
     void RegisterObserver(ObserverType& observer, int priority = 0) override
     {
-        // Проверяем, подписан ли уже наблюдатель
+ 
         if (m_observerToPriority.find(&observer) != m_observerToPriority.end())
         {
-            return; // уже подписан — повторная регистрация не выполняется
+            return;
         }
 
-        // Вставка в обе структуры с O(log n)
-        m_observerToPriority[&observer] = priority;
-        m_priorityToObservers[priority].insert(&observer);
+        auto pit = m_priorityToObservers.try_emplace(priority).first;
+        auto& observersSet = pit->second;
+
+        auto insertResult = observersSet.insert(&observer);
+        if (!insertResult.second)
+        {
+            // уже есть в set (дубликат) — ничего не делаем
+            return;
+        }
+
+        // 3) Попытка вставить в обратную таблицу. Если emplace бросит — откатим вставку в set.
+        try
+        {
+            m_observerToPriority.emplace(&observer, priority);
+        }
+        catch (...)
+        {
+            // В случае исключения откатываем изменения в set и удаляем пустой контейнер priority
+            observersSet.erase(&observer);
+            if (observersSet.empty())
+            {
+                m_priorityToObservers.erase(pit);
+            }
+            throw; // пробрасываем дальше
+        }
     }
+
 
     // --------------------------------------------
     // Удаление наблюдателя
