@@ -25,15 +25,35 @@ public:
 };
 
 // ----------------------------------------
-// Тест №1 — Проверка порядка вызова наблюдателей по приоритетам
+// Тест №1 — Проверка порядка вызова наблюдателей по приоритетам (реальный лог вызовов)
 // ----------------------------------------
-TEST_CASE("Observers are notified in order of priority", "[observer]")
+TEST_CASE("Наблюдатели уведомляются в порядке приоритета (реальный лог вызовов)", "[observer]")
 {
     CWeatherData wd;
 
-    CTestObserver low("Low");
-    CTestObserver mid("Mid");
-    CTestObserver high("High");
+    // общий лог, в который будут писать все наблюдатели в порядке вызова
+    std::vector<std::string> callLog;
+
+    // Наблюдатель, пишущий в общий лог (локальный класс внутри теста)
+    class CTestObserverLog : public IObserver<SWeatherInfo>
+    {
+    public:
+        CTestObserverLog(std::string name, std::vector<std::string>& log)
+            : m_name(std::move(name)), m_log(log) {}
+
+        void Update(SWeatherInfo const& /*data*/) override
+        {
+            m_log.push_back(m_name);
+        }
+
+    private:
+        std::string m_name;
+        std::vector<std::string>& m_log;
+    };
+
+    CTestObserverLog low("Low", callLog);
+    CTestObserverLog mid("Mid", callLog);
+    CTestObserverLog high("High", callLog);
 
     wd.RegisterObserver(low, 1);
     wd.RegisterObserver(mid, 5);
@@ -41,26 +61,18 @@ TEST_CASE("Observers are notified in order of priority", "[observer]")
 
     wd.SetMeasurements(25, 0.7, 760);
 
-    // Проверяем, что все получили уведомления
-    REQUIRE(low.notifications.size() == 1);
-    REQUIRE(mid.notifications.size() == 1);
-    REQUIRE(high.notifications.size() == 1);
+    // Все трое должны были быть вызваны
+    REQUIRE(callLog.size() == 3);
 
-    // Проверяем порядок (по приоритетам)
-    std::vector<std::string> actualOrder = {
-        high.notifications.front(),
-        mid.notifications.front(),
-        low.notifications.front()
-    };
-
+    // Проверяем фактический порядок вызовов: от высокого приоритета к низкому
     std::vector<std::string> expectedOrder = { "High", "Mid", "Low" };
-    REQUIRE(actualOrder == expectedOrder);
+    REQUIRE(callLog == expectedOrder);
 }
 
 // ----------------------------------------
 // Тест №2 — Повторная регистрация не создаёт дубликатов
 // ----------------------------------------
-TEST_CASE("Duplicate observer registration is ignored", "[observer]")
+TEST_CASE("Повторная регистрация наблюдателя игнорируется", "[observer]")
 {
     CWeatherData wd;
     CTestObserver obs("Unique");
@@ -77,7 +89,7 @@ TEST_CASE("Duplicate observer registration is ignored", "[observer]")
 // ----------------------------------------
 // Тест №3 — Удалённый наблюдатель не получает обновления
 // ----------------------------------------
-TEST_CASE("Removed observer does not receive notifications", "[observer]")
+TEST_CASE("Удалённый наблюдатель не получает уведомления", "[observer]")
 {
     CWeatherData wd;
     CTestObserver obs("Temp");
