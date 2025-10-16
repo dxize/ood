@@ -127,30 +127,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CommandProcessor.cpp" />
     <ClCompile Include="Shapes\CPicture.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Shapes\CCircle.cpp" />
-    <ClCompile Include="Shapes\CLineSegment.cpp" />
-    <ClCompile Include="Shapes\Commands\CCommandParser.cpp" />
-    <ClCompile Include="Shapes\Commands\CCommandParser.h" />
-    <ClCompile Include="Shapes\Commands\Commands.cpp" />
-    <ClCompile Include="Shapes\Commands\Commands.h" />
-    <ClCompile Include="Shapes\CRectangle.cpp" />
-    <ClCompile Include="Shapes\CShapeManager.cpp" />
-    <ClCompile Include="Shapes\CTriangle.cpp" />
+    <ClCompile Include="Shapes\CircleStrategy.cpp" />
+    <ClCompile Include="Shapes\LineStrategy.cpp" />
+    <ClCompile Include="Shapes\RectangleStrategy.cpp" />
+    <ClCompile Include="Shapes\Shape.cpp" />
+    <ClCompile Include="Shapes\ShapeFactory.cpp" />
+    <ClCompile Include="Shapes\TextStrategy.cpp" />
+    <ClCompile Include="Shapes\TriangleStrategy.cpp" />
     <ClCompile Include="Shapes\DrawShapes\CCanvas.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shapes\Commands\ICommand.h" />
-    <ClInclude Include="Shapes\CCircle.h" />
-    <ClInclude Include="Shapes\CLineSegment.h" />
-    <ClInclude Include="Shapes\CPoint.h" />
-    <ClInclude Include="Shapes\CRectangle.h" />
-    <ClInclude Include="Shapes\CShapeManager.h" />
-    <ClInclude Include="Shapes\CTriangle.h" />
+    <ClInclude Include="CommandProcessor.h" />
+    <ClInclude Include="Shapes\CircleStrategy.h" />
+    <ClInclude Include="Shapes\LineStrategy.h" />
+    <ClInclude Include="Shapes\RectangleStrategy.h" />
+    <ClInclude Include="Shapes\ShapeFactory.h" />
+    <ClInclude Include="Shapes\TextStrategy.h" />
+    <ClInclude Include="Shapes\TriangleStrategy.h" />
     <ClInclude Include="Shapes\DrawShapes\CCanvas.h" />
     <ClInclude Include="Shapes\DrawShapes\ICanvas.h" />
-    <ClInclude Include="Shapes\IShape.h" />
+    <ClInclude Include="Shapes\IShapeStrategy.h" />
+    <ClInclude Include="Shapes\Shape.h" />
     <ClInclude Include="Shapes\CPicture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,68 +1,125 @@
 #include "CPicture.h"
 #include <sstream>
 #include <algorithm>
+#include <stdexcept> 
 
-bool CPicture::AddShape(const std::string& id, std::unique_ptr<IShape> shape) {
-    if (m_shapes.find(id) != m_shapes.end()) {
-        return false;
+
+void shapes::CPicture::AddShape(const std::string& id, std::unique_ptr<Shape> shape) 
+{
+    if (m_shapes.find(id) != m_shapes.end()) 
+    {
+        throw std::runtime_error("Shape with id '" + id + "' already exists");
     }
     m_shapes[id] = std::move(shape);
     m_shapeOrder.push_back(id);
-    return true;
 }
 
-bool CPicture::DeleteShape(const std::string& id) {
+void shapes::CPicture::DeleteShape(const std::string& id) 
+{
     auto it = m_shapes.find(id);
-    if (it == m_shapes.end()) {
-        return false;
+    if (it == m_shapes.end()) 
+    {
+        throw std::runtime_error("Shape with id '" + id + "' not found");
     }
     m_shapes.erase(it);
     m_shapeOrder.erase(std::remove(m_shapeOrder.begin(), m_shapeOrder.end(), id), m_shapeOrder.end());
-    return true;
 }
 
-void CPicture::MoveShape(const std::string& id, double dx, double dy) {
+void shapes::CPicture::MoveShape(const std::string& id, double dx, double dy) 
+{
     auto it = m_shapes.find(id);
-    if (it != m_shapes.end()) {
-        it->second->Move(dx, dy);
+    if (it == m_shapes.end()) 
+    {
+        throw std::runtime_error("Shape with id '" + id + "' not found");
     }
+    it->second->Move(dx, dy);
 }
 
-void CPicture::MoveAllShapes(double dx, double dy) {
-    for (auto& pair : m_shapes) {
+void shapes::CPicture::MoveAllShapes(double dx, double dy) 
+{
+    for (auto& pair : m_shapes) 
+    {
         pair.second->Move(dx, dy);
     }
 }
 
-void CPicture::ChangeShapeColor(const std::string& id, uint32_t newColor) {
-    // Реализация зависит от конкретной архитектуры
-    // Можно добавить метод SetOutlineColor в IShape, если нужно
-}
-
-void CPicture::ChangeShape(const std::string& id, std::unique_ptr<IShape> newShape) {
+void shapes::CPicture::ChangeShapeColor(const std::string& id, const std::string& newColor) 
+{
     auto it = m_shapes.find(id);
-    if (it != m_shapes.end()) {
-        it->second = std::move(newShape);
+    if (it == m_shapes.end()) 
+    {
+        throw std::runtime_error("Shape with id '" + id + "' not found");
     }
+    it->second->SetColor(newColor);
 }
 
-std::string CPicture::ListShapes() const {
-    std::stringstream ss;
-    for (const auto& id : m_shapeOrder) {
+void shapes::CPicture::ChangeShape(const std::string& id, std::unique_ptr<IShapeStrategy> newStrategy) 
+{
+    auto it = m_shapes.find(id);
+    if (it == m_shapes.end()) 
+    {
+        throw std::runtime_error("Shape with id '" + id + "' not found");
+    }
+    it->second->SetStrategy(std::move(newStrategy));
+}
+
+void shapes::CPicture::DrawShape(ICanvas& canvas, const std::string& id) const 
+{
+    auto it = m_shapes.find(id);
+    if (it == m_shapes.end()) 
+    {
+        throw std::runtime_error("Shape with id '" + id + "' not found");
+    }
+    it->second->Draw(canvas);
+}
+
+void shapes::CPicture::DrawAllShapes(ICanvas& canvas) const 
+{
+    for (const auto& id : m_shapeOrder) 
+    {
         auto it = m_shapes.find(id);
-        if (it != m_shapes.end()) {
-            ss << "Shape " << id << ": " << it->second->ToString() << "\n";
+        if (it != m_shapes.end()) 
+        {
+            it->second->Draw(canvas);
         }
     }
+}
+
+std::string shapes::CPicture::ListShapes() const 
+{
+    std::stringstream ss;
+    ss << "Shapes in picture (" << m_shapes.size() << " total):\n";
+
+    int index = 1;
+    for (const auto& id : m_shapeOrder) 
+    {
+        auto it = m_shapes.find(id);
+        if (it != m_shapes.end()) 
+        {
+            ss << index << ". " << it->second->ToString() << "\n";
+            index++;
+        }
+    }
+
     return ss.str();
 }
 
-IShape* CPicture::GetShape(const std::string& id) {
+shapes::Shape* shapes::CPicture::GetShape(const std::string& id) 
+{
     auto it = m_shapes.find(id);
-    return it != m_shapes.end() ? it->second.get() : nullptr;
+    if (it == m_shapes.end()) 
+    {
+        throw std::runtime_error("Shape with id '" + id + "' not found");
+    }
+    return it->second.get();
 }
 
-const IShape* CPicture::GetShape(const std::string& id) const {
+const shapes::Shape* shapes::CPicture::GetShape(const std::string& id) const 
+{
     auto it = m_shapes.find(id);
-    return it != m_shapes.end() ? it->second.get() : nullptr;
+    if (it == m_shapes.end()) 
+    {
+        throw std::runtime_error("Shape with id '" + id + "' not found");
+    }
+    return it->second.get();
 }

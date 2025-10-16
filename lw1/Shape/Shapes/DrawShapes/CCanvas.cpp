@@ -1,70 +1,80 @@
-﻿#define _USE_MATH_DEFINES
-#include "CCanvas.h"
-#include <GLFW/glfw3.h>
-#include <cmath>
+﻿#include "CCanvas.h"
+#include <iomanip>
 
-static inline void ApplyColor(uint32_t color)
+CCanvas::CCanvas(const std::string& filename, int width, int height) 
 {
-    // распаковываем 0xRRGGBB → три GLubyte
-    GLubyte r = static_cast<GLubyte>((color >> 16) & 0xFF);
-    GLubyte g = static_cast<GLubyte>((color >> 8) & 0xFF);
-    GLubyte b = static_cast<GLubyte>((color >> 0) & 0xFF);
-    glColor3ub(r, g, b);
-}
-
-void CCanvas::DrawLine(CPoint from, CPoint to, uint32_t lineColor) const
-{
-    ApplyColor(lineColor);
-    glBegin(GL_LINES);
-    glVertex2f(static_cast<GLfloat>(from.x),
-        static_cast<GLfloat>(from.y));
-    glVertex2f(static_cast<GLfloat>(to.x),
-        static_cast<GLfloat>(to.y));
-    glEnd();
-}
-
-void CCanvas::FillPolygon(std::vector<CPoint> points, uint32_t fillColor) const
-{
-    ApplyColor(fillColor);
-    glBegin(GL_POLYGON);
-    for (const auto& pt : points)
-    {
-        glVertex2f(static_cast<GLfloat>(pt.x),
-            static_cast<GLfloat>(pt.y));
+    m_svgFile.open(filename);
+    if (!m_svgFile.is_open()) {
+        throw std::runtime_error("Cannot open SVG file: " + filename);
     }
-    glEnd();
+
+    m_svgFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    m_svgFile << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" "
+        << "width=\"" << width << "\" height=\"" << height << "\">\n";
+    m_isOpen = true;
 }
 
-void CCanvas::DrawCircle(CPoint center, double radius, uint32_t lineColor) const
+CCanvas::~CCanvas() 
 {
-    ApplyColor(lineColor);
-    constexpr int segments = 360;
-    glBegin(GL_LINE_LOOP);
-    for (int i = 0; i < segments; ++i)
-    {
-        double theta = 2.0 * M_PI * i / segments;
-        double x = center.x + radius * std::cos(theta);
-        double y = center.y + radius * std::sin(theta);
-        glVertex2f(static_cast<GLfloat>(x),
-            static_cast<GLfloat>(y));
-    }
-    glEnd();
+    Finish();
 }
 
-void CCanvas::FillCircle(CPoint center, double radius, uint32_t fillColor) const
+void CCanvas::Finish() 
 {
-    ApplyColor(fillColor);
-    constexpr int segments = 360;
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(static_cast<GLfloat>(center.x),
-        static_cast<GLfloat>(center.y));
-    for (int i = 0; i <= segments; ++i)
-    {
-        double theta = 2.0 * M_PI * i / segments;
-        double x = center.x + radius * std::cos(theta);
-        double y = center.y + radius * std::sin(theta);
-        glVertex2f(static_cast<GLfloat>(x),
-            static_cast<GLfloat>(y));
+    if (m_isOpen) {
+        m_svgFile << "</svg>\n";
+        m_svgFile.flush();
+        m_svgFile.close();
+        m_isOpen = false;
     }
-    glEnd();
+}
+
+void CCanvas::SetColor(const std::string& color) 
+{
+    m_currentColor = color;
+}
+
+void CCanvas::MoveTo(double x, double y) 
+{
+    m_currentX = x;
+    m_currentY = y;
+}
+
+void CCanvas::LineTo(double x, double y) 
+{
+    m_svgFile << "<line x1=\"" << m_currentX << "\" y1=\"" << m_currentY
+        << "\" x2=\"" << x << "\" y2=\"" << y
+        << "\" stroke=\"" << m_currentColor
+        << "\" stroke-width=\"2\"/>\n";
+    m_currentX = x;
+    m_currentY = y;
+}
+
+void CCanvas::DrawEllipse(double cx, double cy, double rx, double ry) 
+{
+    m_svgFile << "<ellipse cx=\"" << cx << "\" cy=\"" << cy
+        << "\" rx=\"" << rx << "\" ry=\"" << ry
+        << "\" fill=\"" << m_currentColor << "\"/>\n";
+}
+
+std::string CCanvas::EscapeText(const std::string& text) 
+{
+    std::string escaped;
+    for (char c : text) {
+        switch (c) {
+        case '&': escaped += "&amp;"; break;
+        case '<': escaped += "&lt;"; break;
+        case '>': escaped += "&gt;"; break;
+        default: escaped += c; break;
+        }
+    }
+    return escaped;
+}
+
+void CCanvas::DrawText(double left, double top, double fontSize, const std::string& text) 
+{
+    m_svgFile << "<text x=\"" << left << "\" y=\"" << top
+        << "\" font-size=\"" << fontSize
+        << "\" fill=\"" << m_currentColor << "\">"
+        << EscapeText(text) << "</text>\n";
 }

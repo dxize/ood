@@ -1,0 +1,11 @@
+C:\Users\gimps\ood\lw1\Shape\CommandProcessor.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\CommandProcessor.obj
+C:\Users\gimps\ood\lw1\Shape\Shapes\CPicture.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\CPicture.obj
+C:\Users\gimps\ood\lw1\Shape\main.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\main.obj
+C:\Users\gimps\ood\lw1\Shape\Shapes\CircleStrategy.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\CircleStrategy.obj
+C:\Users\gimps\ood\lw1\Shape\Shapes\LineStrategy.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\LineStrategy.obj
+C:\Users\gimps\ood\lw1\Shape\Shapes\RectangleStrategy.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\RectangleStrategy.obj
+C:\Users\gimps\ood\lw1\Shape\Shapes\Shape.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\Shape.obj
+C:\Users\gimps\ood\lw1\Shape\Shapes\ShapeFactory.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\ShapeFactory.obj
+C:\Users\gimps\ood\lw1\Shape\Shapes\TextStrategy.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\TextStrategy.obj
+C:\Users\gimps\ood\lw1\Shape\Shapes\TriangleStrategy.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\TriangleStrategy.obj
+C:\Users\gimps\ood\lw1\Shape\Shapes\DrawShapes\CCanvas.cpp;C:\Users\gimps\ood\lw1\Shape\Shape\x64\Debug\CCanvas.obj

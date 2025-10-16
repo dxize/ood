@@ -1,15 +1,28 @@
 #pragma once
-
-#include "../CPoint.h"
 #include "ICanvas.h"
-#include <cstdint>
-#include <vector>
+#include <fstream>
+#include <string>
+#include <stdexcept>
 
-class CCanvas: public ICanvas
+class CCanvas : public ICanvas 
 {
 public:
-	void DrawLine(CPoint from, CPoint to, uint32_t lineColor) const override;
-	void FillPolygon(std::vector<CPoint> points, uint32_t fillColor) const override;
-	void DrawCircle(CPoint center, double radius, uint32_t lineColor) const override;
-	void FillCircle(CPoint center, double radius, uint32_t fillColor) const override;
+    CCanvas(const std::string& filename, int width = 800, int height = 600);
+    ~CCanvas();
+
+    void SetColor(const std::string& color) override;
+    void MoveTo(double x, double y) override;
+    void LineTo(double x, double y) override;
+    void DrawEllipse(double cx, double cy, double rx, double ry) override;
+    void DrawText(double left, double top, double fontSize, const std::string& text) override;
+    void Finish();
+
+private:
+    std::ofstream m_svgFile;
+    std::string m_currentColor = "#000000";
+    double m_currentX = 0;
+    double m_currentY = 0;
+    bool m_isOpen = false;
+
+    std::string EscapeText(const std::string& text);
 };
