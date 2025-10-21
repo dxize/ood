@@ -17,7 +17,7 @@ public:
 };
 
 // Тест 1: один наблюдатель подписан на две станции — получает события от "in" и "out"
-TEST_CASE("Observer receives sourceId from both stations", "[observer][sourceId]")
+TEST_CASE("Наблюдатель получает sourceId от обеих станций")
 {
     CWeatherData inStation("in");
     CWeatherData outStation("out");
@@ -44,7 +44,7 @@ TEST_CASE("Observer receives sourceId from both stations", "[observer][sourceId]
 }
 
 // Тест 2: повторная регистрация на той же станции игнорируется (нет дублей)
-TEST_CASE("Duplicate registration ignored (per observable)", "[observer][registration]")
+TEST_CASE("Повторная регистрация на одной станции игнорируется")
 {
     CWeatherData station("in");
     CTestObserverSource observer;
@@ -60,7 +60,7 @@ TEST_CASE("Duplicate registration ignored (per observable)", "[observer][registr
 }
 
 // Тест 3: удалённый наблюдатель не получает уведомлений
-TEST_CASE("Removed observer does not receive notifications", "[observer][remove]")
+TEST_CASE("Удалённый наблюдатель не получает уведомлений")
 {
     CWeatherData station("out");
     CTestObserverSource observer;

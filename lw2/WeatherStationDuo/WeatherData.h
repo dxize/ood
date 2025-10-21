@@ -19,16 +19,34 @@ class CStatsData
 public:
     void Update(double value)
     {
-        if (m_min > value) m_min = value;
-        if (m_max < value) m_max = value;
+        if (m_min > value)
+        {
+            m_min = value;
+        }
+        if (m_max < value)
+        {
+            m_max = value;
+        }
         m_acc += value;
         ++m_count;
     }
 
-    bool HasData() const { return m_count != 0; }
-    double GetMin() const { return HasData() ? m_min : 0; }
-    double GetMax() const { return HasData() ? m_max : 0; }
-    double GetAverage() const { return m_count ? (m_acc / m_count) : 0; }
+    bool HasData() const 
+    { 
+        return m_count != 0; 
+    }
+    double GetMin() const 
+    { 
+        return HasData() ? m_min : 0; 
+    }
+    double GetMax() const 
+    { 
+        return HasData() ? m_max : 0; 
+    }
+    double GetAverage() const 
+    { 
+        return m_count ? (m_acc / m_count) : 0; 
+    }
 
 private:
     double m_min = std::numeric_limits<double>::infinity();
@@ -40,33 +58,21 @@ private:
 // CDisplay — выводит данные и метку источника (sourceId)
 class CDisplay : public IObserver<SWeatherInfo>
 {
-public:
-    // конструктор с опциональным заголовком дисплея
-    explicit CDisplay(std::string title = {}) : m_title(std::move(title)) {}
-
+private:
     void Update(SWeatherInfo const& data, const std::string& sourceId) override
     {
-        if (!m_title.empty())
-        {
-            std::cout << m_title << " ";
-        }
-        std::cout << "[" << sourceId << "] "
-            << "Temp=" << data.temperature
-            << " Hum=" << data.humidity
-            << " Pres=" << data.pressure
-            << std::endl;
-    }
+        std::cout << "Display [" << sourceId << "]:" << std::endl;
+        std::cout << "  Temp=" << data.temperature << std::endl;
+        std::cout << "  Hum=" << data.humidity << std::endl;
+        std::cout << "  Pres=" << data.pressure << std::endl;
 
-private:
-    std::string m_title;
+    }
 };
 
 // CStatsDisplay — собирает статистику по показателям, отмечая источник в выводе
 class CStatsDisplay : public IObserver<SWeatherInfo>
 {
-public:
-    explicit CStatsDisplay(std::string title = {}) : m_title(std::move(title)) {}
-
+private:
     void Update(SWeatherInfo const& data, const std::string& sourceId) override
     {
         auto& statTemp = m_stats["Temp"];
@@ -82,11 +88,7 @@ public:
 
     void Print(const std::string& sourceId)
     {
-        if (!m_title.empty())
-        {
-            std::cout << m_title << " ";
-        }
-        std::cout << "[" << sourceId << "] Stats:" << std::endl;
+        std::cout << "Stats Display [" << sourceId << "]:" << std::endl;
         for (const auto& kv : m_stats)
         {
             const std::string& name = kv.first;
@@ -104,10 +106,7 @@ public:
             }
         }
     }
-
-private:
     std::map<std::string, CStatsData> m_stats;
-    std::string m_title;
 };
 
 // Датчик погоды — теперь хранит id и реализует GetId()
@@ -119,11 +118,23 @@ public:
     {
     }
 
-    double GetTemperature() const { return m_temperature; }
-    double GetHumidity() const { return m_humidity; }
-    double GetPressure() const { return m_pressure; }
+    double GetTemperature() const 
+    { 
+        return m_temperature; 
+    }
+    double GetHumidity() const 
+    { 
+        return m_humidity; 
+    }
+    double GetPressure() const 
+    { 
+        return m_pressure; 
+    }
 
-    void MeasurementsChanged() { NotifyObservers(); }
+    void MeasurementsChanged() 
+    { 
+        NotifyObservers(); 
+    }
 
     void SetMeasurements(double temp, double humidity, double pressure)
     {
@@ -134,7 +145,10 @@ public:
     }
 
     // реализация GetId() из IObservable
-    std::string GetId() const { return m_id; }
+    std::string GetId() const 
+    {
+        return m_id; 
+    }
 
 protected:
     SWeatherInfo GetChangedData() const override

@@ -3,9 +3,6 @@
 #include "../WeatherData.h"
 #include "../Observer.h"
 
-// --------------------------------------------------------
-// Ќаблюдатель, который сам себ€ удал€ет при первом уведомлении
-// --------------------------------------------------------
 class CSelfRemovingObserver : public IObserver<SWeatherInfo>
 {
 public:
@@ -17,7 +14,6 @@ public:
     void Update(SWeatherInfo const& data) override
     {
         ++m_updateCount;
-        // —амоудаление из наблюдателей
         m_observable.RemoveObserver(*this);
     }
 
@@ -28,9 +24,6 @@ private:
     int m_updateCount = 0;
 };
 
-// --------------------------------------------------------
-// ќбычный наблюдатель, считающий количество уведомлений
-// --------------------------------------------------------
 class CCountingObserver : public IObserver<SWeatherInfo>
 {
 public:
@@ -45,9 +38,6 @@ private:
     int m_updateCount = 0;
 };
 
-// --------------------------------------------------------
-// “ест
-// --------------------------------------------------------
 TEST_CASE("Ќаблюдатель безопасно удал€ет себ€ во врем€ уведомлени€", "[WeatherStation]")
 {
     CWeatherData weatherData;
@@ -58,22 +48,13 @@ TEST_CASE("Ќаблюдатель безопасно удал€ет себ€ во врем€ уведомлени€", "[WeatherSt
     weatherData.RegisterObserver(selfRemover);
     weatherData.RegisterObserver(counter);
 
-    SECTION("—амоудал€ющийс€ наблюдатель отписываетс€ после первого уведомлени€")
-    {
-        weatherData.SetMeasurements(25.0, 0.5, 760.0);
-
-        REQUIRE(selfRemover.GetUpdateCount() == 1);
-        REQUIRE(counter.GetUpdateCount() == 1);
-    }
 
     SECTION("ѕосле удалени€ уведомл€ютс€ только оставшиес€ наблюдатели")
     {
         weatherData.SetMeasurements(25.0, 0.5, 760.0);
         weatherData.SetMeasurements(20.0, 0.6, 761.0);
 
-        // selfRemover должен был вызватьс€ только один раз, затем отпишетс€
-        REQUIRE(selfRemover.GetUpdateCount() == 1);
-        // counter должен получить оба уведомлени€
+        REQUIRE(selfRemover.GetUpdateCount() == 1);  
         REQUIRE(counter.GetUpdateCount() == 2);
     }
 }

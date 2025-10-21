@@ -1,5 +1,12 @@
 ﻿  CommandProcessor.cpp
-  CCanvas.cpp
+  CPicture.cpp
+  CircleStrategy.cpp
+  LineStrategy.cpp
+  RectangleStrategy.cpp
+  Shape.cpp
+  ShapeFactory.cpp
+  TextStrategy.cpp
+  TriangleStrategy.cpp
   main.cpp
   Создание кода...
   Shape.vcxproj -> C:\Users\gimps\ood\lw1\Shape\x64\Debug\Shape.exe

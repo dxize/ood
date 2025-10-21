@@ -40,7 +40,7 @@ public:
     {
         if (m_observerToPriority.find(&observer) != m_observerToPriority.end())
         {
-            return; // уже подписан
+            return; 
         }
 
         auto pit = m_priorityToObservers.try_emplace(priority).first;
