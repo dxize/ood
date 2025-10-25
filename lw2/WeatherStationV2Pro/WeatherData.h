@@ -12,8 +12,8 @@ struct SWeatherInfo
     double temperature = 0;
     double humidity = 0;
     double pressure = 0;
-    double windSpeed = 0;       // м/с
-    double windDirection = 0;   // градусы (0 — север)
+    double windSpeed = 0;       
+    double windDirection = 0;   
 };
 
 class CStatsData
@@ -53,7 +53,6 @@ private:
     unsigned m_count = 0;
 };
 
-// --- статистика по ветру ---
 class CWindStatsData
 {
 public:
@@ -102,7 +101,6 @@ private:
     unsigned m_count = 0;
 };
 
-// --- обычный дисплей ---
 class CDisplay : public IObserver<SWeatherInfo>
 {
 private:
@@ -117,7 +115,6 @@ private:
     }
 };
 
-// --- статистический дисплей ---
 class CStatsDisplay : public IObserver<SWeatherInfo>
 {
 private:
@@ -144,9 +141,10 @@ private:
 
             if (stat.HasData())
             {
-                std::cout << "Max " << name << " " << stat.GetMax() << std::endl;
-                std::cout << "Min " << name << " " << stat.GetMin() << std::endl;
-                std::cout << "Average " << name << " " << stat.GetAverage() << std::endl;
+                std::cout << "--- " << name << " ---" << std::endl;
+                std::cout << "Max " << stat.GetMax() << std::endl;
+                std::cout << "Min " << stat.GetMin() << std::endl;
+                std::cout << "Average " << stat.GetAverage() << std::endl;
             }
             else
             {
@@ -166,7 +164,6 @@ private:
     CWindStatsData m_windStats;
 };
 
-// --- источник данных ---
 class CWeatherData : public CObservable<SWeatherInfo>
 {
 public:

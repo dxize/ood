@@ -7,7 +7,6 @@
 #include <limits>
 #include "Observer.h"
 
-// --- структура для обычных данных ---
 struct SWeatherInfo
 {
     double temperature = 0;
@@ -15,17 +14,15 @@ struct SWeatherInfo
     double pressure = 0;
 };
 
-// --- структура для Pro-версии (включает ветер) ---
 struct SWeatherInfoPro
 {
     double temperature = 0;
     double humidity = 0;
     double pressure = 0;
-    double windSpeed = 0;     // м/с
-    double windDirection = 0; // градусы
+    double windSpeed = 0;     
+    double windDirection = 0; 
 };
 
-// --- статистика по числовому параметру ---
 class CStatsData
 {
 public:
@@ -36,10 +33,22 @@ public:
         m_acc += value;
         ++m_count;
     }
-    bool HasData() const { return m_count != 0; }
-    double GetMin() const { return HasData() ? m_min : 0; }
-    double GetMax() const { return HasData() ? m_max : 0; }
-    double GetAverage() const { return m_count ? (m_acc / m_count) : 0; }
+    bool HasData() const 
+    { 
+        return m_count != 0; 
+    }
+    double GetMin() const 
+    { 
+        return HasData() ? m_min : 0; 
+    }
+    double GetMax() const 
+    { 
+        return HasData() ? m_max : 0; 
+    }
+    double GetAverage() const 
+    { 
+        return m_count ? (m_acc / m_count) : 0; 
+    }
 
 private:
     double m_min = std::numeric_limits<double>::infinity();
@@ -48,7 +57,6 @@ private:
     unsigned m_count = 0;
 };
 
-// --- статистика по ветру ---
 class CWindStats
 {
 public:
@@ -61,21 +69,34 @@ public:
         ++m_count;
     }
 
-    double GetAverageSpeed() const { return m_speedStats.GetAverage(); }
+    double GetAverageSpeed() const 
+    { 
+        return m_speedStats.GetAverage(); 
+    }
 
     double GetAverageDirection() const
     {
         if (m_count == 0)
+        {
             return 0;
+        }
         double avgRad = std::atan2(m_sumY / m_count, m_sumX / m_count);
         double avgDeg = avgRad * 180.0 / M_PI;
         if (avgDeg < 0)
+        {
             avgDeg += 360.0;
+        }
         return avgDeg;
     }
 
-    double GetMinSpeed() const { return m_speedStats.GetMin(); }
-    double GetMaxSpeed() const { return m_speedStats.GetMax(); }
+    double GetMinSpeed() const 
+    { 
+        return m_speedStats.GetMin(); 
+    }
+    double GetMaxSpeed() const 
+    { 
+        return m_speedStats.GetMax(); 
+    }
 
 private:
     CStatsData m_speedStats;
@@ -84,7 +105,6 @@ private:
     unsigned m_count = 0;
 };
 
-// --- обычный дисплей (поддерживает обе версии) ---
 class CDisplay : public IObserver<SWeatherInfo>, public IObserver<SWeatherInfoPro>
 {
 private:
@@ -109,60 +129,67 @@ private:
     }
 };
 
-// --- статистический дисплей (поддерживает обе версии) ---
 class CStatsDisplay : public IObserver<SWeatherInfo>, public IObserver<SWeatherInfoPro>
 {
 private:
     void Update(SWeatherInfo const& data, const std::string& sourceId) override
     {
-        UpdateCommon(data.temperature, data.humidity, data.pressure);
+        UpdateCommon(sourceId, data.temperature, data.humidity, data.pressure);
         Print(sourceId, false);
     }
 
     void Update(SWeatherInfoPro const& data, const std::string& sourceId) override
     {
-        UpdateCommon(data.temperature, data.humidity, data.pressure);
-        m_windStats.Update(data.windSpeed, data.windDirection);
+        UpdateCommon(sourceId, data.temperature, data.humidity, data.pressure);
+        m_windStatsPerSource[sourceId].Update(data.windSpeed, data.windDirection);
         Print(sourceId, true);
     }
 
-    void UpdateCommon(double t, double h, double p)
+    void UpdateCommon(const std::string& sourceId, double t, double h, double p)
     {
-        m_stats["Temp"].Update(t);
-        m_stats["Hum"].Update(h);
-        m_stats["Pressure"].Update(p);
+        auto& stats = m_statsPerSource[sourceId];
+        stats["Temp"].Update(t);
+        stats["Hum"].Update(h);
+        stats["Pressure"].Update(p);
     }
 
     void Print(const std::string& sourceId, bool showWind)
     {
         std::cout << "Stats Display [" << sourceId << "]:" << std::endl;
-        for (const auto& kv : m_stats)
+
+        const auto& statsMap = m_statsPerSource[sourceId];
+        for (const auto& kv : statsMap)
         {
             const auto& name = kv.first;
             const auto& stat = kv.second;
-            std::cout << "  " << name << ": Min=" << stat.GetMin()
+            std::cout << "  " << name
+                << ": Min=" << stat.GetMin()
                 << " Max=" << stat.GetMax()
                 << " Avg=" << stat.GetAverage() << std::endl;
         }
+
         if (showWind)
         {
-            std::cout << "  Wind: Min=" << m_windStats.GetMinSpeed()
-                << " Max=" << m_windStats.GetMaxSpeed()
-                << " Avg=" << m_windStats.GetAverageSpeed()
-                << " Dir=" << m_windStats.GetAverageDirection() << "°" << std::endl;
+            const auto& wind = m_windStatsPerSource[sourceId];
+            std::cout << "  Wind:"
+                << " Min=" << wind.GetMinSpeed()
+                << " Max=" << wind.GetMaxSpeed()
+                << " Avg=" << wind.GetAverageSpeed()
+                << " Dir=" << wind.GetAverageDirection() << "°" << std::endl;
         }
+
         std::cout << "----------------" << std::endl;
     }
 
-    std::map<std::string, CStatsData> m_stats;
-    CWindStats m_windStats;
+    std::map<std::string, std::map<std::string, CStatsData>> m_statsPerSource;
+    std::map<std::string, CWindStats> m_windStatsPerSource;
 };
 
-// --- обычная станция ---
+
 class CWeatherData : public CObservable<SWeatherInfo>
 {
 public:
-    explicit CWeatherData(std::string id = "unknown") : m_id(std::move(id)) {}
+    CWeatherData(std::string id = "unknown") : m_id(std::move(id)) {}
 
     void SetMeasurements(double t, double h, double p)
     {
@@ -172,24 +199,24 @@ public:
         NotifyObservers();
     }
 
-    std::string GetId() const override { return m_id; }
-
 protected:
     SWeatherInfo GetChangedData() const override
     {
         return { m_temperature, m_humidity, m_pressure };
     }
-
+    std::string GetId() const override
+    {
+        return m_id;
+    }
 private:
     std::string m_id;
     double m_temperature = 0, m_humidity = 0, m_pressure = 760;
 };
 
-// --- PRO станция (с ветром) ---
 class CWeatherDataPro : public CObservable<SWeatherInfoPro>
 {
 public:
-    explicit CWeatherDataPro(std::string id = "unknown") : m_id(std::move(id)) {}
+    CWeatherDataPro(std::string id = "unknown") : m_id(std::move(id)) {}
 
     void SetMeasurements(double t, double h, double p, double windSpeed, double windDir)
     {
@@ -201,14 +228,15 @@ public:
         NotifyObservers();
     }
 
-    std::string GetId() const override { return m_id; }
-
 protected:
     SWeatherInfoPro GetChangedData() const override
     {
         return { m_temperature, m_humidity, m_pressure, m_windSpeed, m_windDir };
     }
-
+    std::string GetId() const override 
+    { 
+        return m_id; 
+    }
 private:
     std::string m_id;
     double m_temperature = 0, m_humidity = 0, m_pressure = 760;

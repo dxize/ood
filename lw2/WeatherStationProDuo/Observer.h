@@ -29,8 +29,6 @@ class CObservable : public IObservable<T>
 public:
     using ObserverType = IObserver<T>;
 
-    virtual std::string GetId() const { return ""; };
-
     void RegisterObserver(ObserverType& observer, int priority = 0) override
     {
  
@@ -106,7 +104,7 @@ public:
 
 protected:
     virtual T GetChangedData() const = 0;
-
+    virtual std::string GetId() const = 0;
 private:
     std::map<ObserverType*, int> m_observerToPriority;
     std::map<int, std::set<ObserverType*>> m_priorityToObservers;

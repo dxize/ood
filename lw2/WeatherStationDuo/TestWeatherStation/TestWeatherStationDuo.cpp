@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 
-// ¬спомогательный наблюдатель, фиксирующий (sourceId, temperature) в пор€дке получени€
 class CTestObserverSource : public IObserver<SWeatherInfo>
 {
 public:
@@ -16,7 +15,6 @@ public:
     std::vector<std::pair<std::string, double>> events;
 };
 
-// “ест 1: один наблюдатель подписан на две станции Ч получает событи€ от "in" и "out"
 TEST_CASE("Ќаблюдатель получает sourceId от обеих станций")
 {
     CWeatherData inStation("in");
@@ -24,18 +22,15 @@ TEST_CASE("Ќаблюдатель получает sourceId от обеих станций")
 
     CTestObserverSource observer;
 
-    // –егистрируем одного и того же наблюдател€ на обе станции
     inStation.RegisterObserver(observer, 5);
     outStation.RegisterObserver(observer, 5);
 
-    // —игнал от внутренней станции
     inStation.SetMeasurements(12.34, 0.5, 760.0);
 
     REQUIRE(observer.events.size() == 1);
     REQUIRE(observer.events[0].first == "in");
     REQUIRE(observer.events[0].second == Approx(12.34));
 
-    // —игнал от внешней станции
     outStation.SetMeasurements(-3.2, 0.8, 759.0);
 
     REQUIRE(observer.events.size() == 2);
@@ -43,14 +38,13 @@ TEST_CASE("Ќаблюдатель получает sourceId от обеих станций")
     REQUIRE(observer.events[1].second == Approx(-3.2));
 }
 
-// “ест 2: повторна€ регистраци€ на той же станции игнорируетс€ (нет дублей)
 TEST_CASE("ѕовторна€ регистраци€ на одной станции игнорируетс€")
 {
     CWeatherData station("in");
     CTestObserverSource observer;
 
     station.RegisterObserver(observer, 5);
-    station.RegisterObserver(observer, 10); // попытка повторной регистрации должна быть проигнорирована
+    station.RegisterObserver(observer, 10);
 
     station.SetMeasurements(7.5, 0.6, 760.0);
 
@@ -59,7 +53,6 @@ TEST_CASE("ѕовторна€ регистраци€ на одной станции игнорируетс€")
     REQUIRE(observer.events[0].second == Approx(7.5));
 }
 
-// “ест 3: удалЄнный наблюдатель не получает уведомлений
 TEST_CASE("”далЄнный наблюдатель не получает уведомлений")
 {
     CWeatherData station("out");

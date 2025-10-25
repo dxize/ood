@@ -13,7 +13,6 @@ struct SWeatherInfo
     double pressure = 0;
 };
 
-// Статистика по одному параметру
 class CStatsData
 {
 public:
@@ -55,7 +54,6 @@ private:
     unsigned m_count = 0;
 };
 
-// CDisplay — выводит данные и метку источника (sourceId)
 class CDisplay : public IObserver<SWeatherInfo>
 {
 private:
@@ -69,51 +67,50 @@ private:
     }
 };
 
-// CStatsDisplay — собирает статистику по показателям, отмечая источник в выводе
 class CStatsDisplay : public IObserver<SWeatherInfo>
 {
 private:
     void Update(SWeatherInfo const& data, const std::string& sourceId) override
     {
-        auto& statTemp = m_stats["Temp"];
-        auto& statHum = m_stats["Hum"];
-        auto& statPressure = m_stats["Pressure"];
-
-        statTemp.Update(data.temperature);
-        statHum.Update(data.humidity);
-        statPressure.Update(data.pressure);
+        auto& sourceStats = m_statsPerSource[sourceId]; 
+        sourceStats["Temp"].Update(data.temperature);
+        sourceStats["Hum"].Update(data.humidity);
+        sourceStats["Pressure"].Update(data.pressure);
 
         Print(sourceId);
     }
 
+
     void Print(const std::string& sourceId)
     {
         std::cout << "Stats Display [" << sourceId << "]:" << std::endl;
-        for (const auto& kv : m_stats)
+        auto it = m_statsPerSource.find(sourceId);
+        if (it != m_statsPerSource.end())
         {
-            const std::string& name = kv.first;
-            const CStatsData& stat = kv.second;
-
-            if (stat.HasData())
+            const auto& stats = it->second;
+            for (const auto& kv : stats)
             {
+                const std::string& name = kv.first;
+                const CStatsData& stat = kv.second;
+
                 std::cout << "  Max " << name << " " << stat.GetMax() << std::endl;
                 std::cout << "  Min " << name << " " << stat.GetMin() << std::endl;
                 std::cout << "  Average " << name << " " << stat.GetAverage() << std::endl;
             }
-            else
-            {
-                std::cout << "  No " << name << " data" << std::endl;
-            }
+        }
+        else
+        {
+            std::cout << "Нет данных для станции " << sourceId << std::endl;
         }
     }
-    std::map<std::string, CStatsData> m_stats;
+    std::map<std::string, std::map<std::string, CStatsData>> m_statsPerSource;
+
 };
 
-// Датчик погоды — теперь хранит id и реализует GetId()
 class CWeatherData : public CObservable<SWeatherInfo>
 {
 public:
-    explicit CWeatherData(std::string id = "unknown")
+    CWeatherData(std::string id = "unknown")
         : m_id(std::move(id))
     {
     }
@@ -144,12 +141,6 @@ public:
         MeasurementsChanged();
     }
 
-    // реализация GetId() из IObservable
-    std::string GetId() const 
-    {
-        return m_id; 
-    }
-
 protected:
     SWeatherInfo GetChangedData() const override
     {
@@ -158,6 +149,11 @@ protected:
         info.humidity = GetHumidity();
         info.pressure = GetPressure();
         return info;
+    }
+
+    std::string GetId() const override
+    {
+        return m_id;
     }
 
 private:
