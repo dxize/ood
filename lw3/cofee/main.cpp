@@ -165,23 +165,17 @@ int main()
 {
 	DialogWithUser();
 	cout << endl;
-	{
-		// Наливаем чашечку латте
+	{ // 1 способ работы
 		auto latte = make_unique<CLatte>();
-		// добавляем корицы
 		auto cinnamon = make_unique<CCinnamon>(move(latte));
-		// добавляем пару долек лимона
 		auto lemon = make_unique<CLemon>(move(cinnamon), 2);
-		// добавляем пару кубиков льда
 		auto iceCubes = make_unique<CIceCubes>(move(lemon), 2, IceCubeType::Dry);
-		// добавляем 2 грамма шоколадной крошки
 		auto beverage = make_unique<CChocolateCrumbs>(move(iceCubes), 2);
 
-		// Выписываем счет покупателю
 		cout << beverage->GetDescription() << " costs " << beverage->GetCost() << endl;
 	}
 
-	{
+	{ // 2 способ работы
 		auto beverage =
 			make_unique<CChocolateCrumbs>(			// Внешний слой: шоколадная крошка
 				make_unique<CIceCubes>(				// | под нею - кубики льда
@@ -192,7 +186,6 @@ int main()
 					2, IceCubeType::Dry),			// | 2 кубика сухого льда
 				2);									// 2 грамма шоколадной крошки
 
-		// Выписываем счет покупателю
 		cout << beverage->GetDescription() << " costs " << beverage->GetCost() << endl;
 	}
 
@@ -250,6 +243,16 @@ int main()
 			<< MakeCondiment<CCoconutFlakes>(8);		// посыпаем кокосовой стружкой
 
 		// Выписываем счет покупателю
+		cout << beverage->GetDescription() << " costs " << beverage->GetCost() << endl;
+	}
+
+	{
+		auto beverage =
+			make_unique<CLatte>()
+			<< MakeCondiment<CCream>()
+			<< MakeCondiment<CChocolate>(3)
+			<< MakeCondiment<CLiquor>(LiquorType::Nut);
+
 		cout << beverage->GetDescription() << " costs " << beverage->GetCost() << endl;
 	}
 }
