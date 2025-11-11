@@ -30,6 +30,8 @@ namespace app
         CModernGraphicsAdapter adapter(renderer);
         shape_drawing_lib::CCanvasPainter painter(adapter);
 
+        adapter.BeginDraw();
         PaintPicture(painter);
+        adapter.EndDraw();
     }
 }

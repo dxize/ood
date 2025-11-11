@@ -8,15 +8,16 @@ namespace app
     {
     public:
         CModernGraphicsAdapter(modern_graphics_lib::ModernGraphicsRenderer& renderer);
-        ~CModernGraphicsAdapter();
 
         void MoveTo(int x, int y) override;
         void LineTo(int x, int y) override;
+
+        void BeginDraw();
+        void EndDraw();
 
     private:
         modern_graphics_lib::ModernGraphicsRenderer& m_renderer;
         int m_x;
         int m_y;
-        bool m_hasCurrentPos;
     };
 }
