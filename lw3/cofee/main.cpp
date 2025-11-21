@@ -255,4 +255,4 @@ int main()
 
 		cout << beverage->GetDescription() << " costs " << beverage->GetCost() << endl;
 	}
-}
+}//зачем нужен абстрактный класс декоратор в чём выгода этого класса

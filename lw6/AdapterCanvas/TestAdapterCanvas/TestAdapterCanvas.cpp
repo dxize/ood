@@ -24,7 +24,7 @@ TEST_CASE("CModernGraphicsAdapter", "[adapter]")
     {
         adapter.BeginDraw();
         REQUIRE_THROWS_AS(adapter.BeginDraw(), std::logic_error);
-        adapter.EndDraw(); 
+        adapter.EndDraw();
     }
 
     SECTION("EndDraw throws if not drawing")
