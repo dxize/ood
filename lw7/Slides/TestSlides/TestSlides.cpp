@@ -7,26 +7,16 @@
 #include <optional>
 #include <vector>
 
-/*
-  Полное покрытие Composite-классов:
-  - GroupShape: AddShape, RemoveShape, GetShapeAt, GetShapeCount
-  - GetFrame / SetFrame (масштабирование дочерних фигур)
-  - Draw (проверка, что не бросает)
-  - CompoundLineStyle / CompoundFillStyle:
-      * SetColor / GetColor (uniform и non-uniform)
-      * SetThickness / GetThickness
-      * SetEnabled / GetEnabled
-  - Поведение на пустой группе и инвалидация кэша стилей
-*/
-
-TEST_CASE("Базовые операции и рамка группы", "[GroupShape][Composite]") {
+TEST_CASE("Базовые операции и рамка группы", "[GroupShape][Composite]") 
+{
     auto group = std::make_shared<GroupShape>();
 
     auto r = std::make_shared<RectangleShape>(Rect{ 10, 10, 20, 10 });
     auto e = std::make_shared<EllipseShape>(Rect{ 40, 5, 10, 30 });
     auto t = std::make_shared<TriangleShape>(Rect{ 60, 15, 20, 20 });
 
-    SECTION("Добавление, удаление и доступ к фигурам") {
+    SECTION("Добавление, удаление и доступ к фигурам") 
+    {
         REQUIRE(group->GetShapeCount() == 0u);
 
         group->AddShape(r);
@@ -48,7 +38,8 @@ TEST_CASE("Базовые операции и рамка группы", "[GroupShape][Composite]") {
         REQUIRE_THROWS_AS(group->RemoveShape(99), std::out_of_range);
     }
 
-    SECTION("Вычисление рамки группы (объединение рамок фигур)") {
+    SECTION("Вычисление рамки группы (объединение рамок фигур)") 
+    {
         group->AddShape(r);
         group->AddShape(e);
         group->AddShape(t);
@@ -60,7 +51,8 @@ TEST_CASE("Базовые операции и рамка группы", "[GroupShape][Composite]") {
         REQUIRE(frame.height == Approx(30.0));
     }
 
-    SECTION("Масштабирование и перенос фигур при изменении рамки группы") {
+    SECTION("Масштабирование и перенос фигур при изменении рамки группы") 
+    {
         group->AddShape(r);
         group->AddShape(e);
 
@@ -79,11 +71,14 @@ TEST_CASE("Базовые операции и рамка группы", "[GroupShape][Composite]") {
 
         REQUIRE(rf.width == Approx(40.0));
         REQUIRE(rf.height == Approx(20.0));
+        REQUIRE(rf.x == Approx(0.0));
+
         REQUIRE(ef.width == Approx(20.0));
         REQUIRE(ef.height == Approx(60.0));
     }
 
-    SECTION("Отрисовка группы не выбрасывает исключений") {
+    SECTION("Отрисовка группы не выбрасывает исключений") 
+    {
         group->AddShape(r);
         group->AddShape(e);
         r->GetFillStyle()->SetEnabled(true);
@@ -95,7 +90,8 @@ TEST_CASE("Базовые операции и рамка группы", "[GroupShape][Composite]") {
     }
 }
 
-TEST_CASE("Полное покрытие CompoundLineStyle", "[CompoundStyles][Composite]") {
+TEST_CASE("Полное покрытие CompoundLineStyle", "[CompoundStyles][Composite]") 
+{
     auto group = std::make_shared<GroupShape>();
     auto r1 = std::make_shared<RectangleShape>(Rect{ 0,0,10,10 });
     auto e1 = std::make_shared<EllipseShape>(Rect{ 20,0,10,10 });
@@ -105,12 +101,14 @@ TEST_CASE("Полное покрытие CompoundLineStyle", "[CompoundStyles][Composite]") {
     group->AddShape(e1);
     group->AddShape(t1);
 
-    SECTION("Установка и получение цвета для всех фигур") {
+    SECTION("Установка и получение цвета для всех фигур") 
+    {
         RGBAColor blue{ 0,0,255,255 };
         group->GetLineStyle()->SetColor(blue);
 
         std::vector<std::shared_ptr<IShape>> shapes = { r1, e1, t1 };
-        for (auto& shape : shapes) {
+        for (auto& shape : shapes) 
+        {
             auto cOpt = shape->GetLineStyle()->GetColor();
             REQUIRE(cOpt.has_value());
             REQUIRE(cOpt.value() == blue);
@@ -120,12 +118,14 @@ TEST_CASE("Полное покрытие CompoundLineStyle", "[CompoundStyles][Composite]") {
         REQUIRE(!group->GetLineStyle()->GetColor().has_value());
     }
 
-    SECTION("Установка и получение толщины линии") {
+    SECTION("Установка и получение толщины линии") 
+    {
         double thick = 4.5;
         group->GetLineStyle()->SetThickness(thick);
 
         std::vector<std::shared_ptr<IShape>> shapes = { r1, e1, t1 };
-        for (auto& shape : shapes) {
+        for (auto& shape : shapes) 
+        {
             auto tOpt = shape->GetLineStyle()->GetThickness();
             REQUIRE(tOpt.has_value());
             REQUIRE(tOpt.value() == Approx(thick));
@@ -135,11 +135,13 @@ TEST_CASE("Полное покрытие CompoundLineStyle", "[CompoundStyles][Composite]") {
         REQUIRE(!group->GetLineStyle()->GetThickness().has_value());
     }
 
-    SECTION("Установка и получение включения линии") {
+    SECTION("Установка и получение включения линии") 
+    {
         group->GetLineStyle()->SetEnabled(false);
 
         std::vector<std::shared_ptr<IShape>> shapes = { r1, e1, t1 };
-        for (auto& shape : shapes) {
+        for (auto& shape : shapes) 
+        {
             auto eOpt = shape->GetLineStyle()->GetEnabled();
             REQUIRE(eOpt.has_value());
             REQUIRE(eOpt.value() == false);
@@ -149,7 +151,8 @@ TEST_CASE("Полное покрытие CompoundLineStyle", "[CompoundStyles][Composite]") {
         REQUIRE(!group->GetLineStyle()->GetEnabled().has_value());
     }
 
-    SECTION("Проверка поведения на пустой группе") {
+    SECTION("Проверка поведения на пустой группе") 
+    {
         auto emptyGroup = std::make_shared<GroupShape>();
         auto lineStyle = emptyGroup->GetLineStyle();
 
@@ -159,10 +162,11 @@ TEST_CASE("Полное покрытие CompoundLineStyle", "[CompoundStyles][Composite]") {
 
         REQUIRE_NOTHROW(lineStyle->SetColor({ 1,1,1,255 }));
         REQUIRE_NOTHROW(lineStyle->SetThickness(2.0));
-        REQUIRE_NOTHROW(lineStyle->SetEnabled(true));
+        REQUIRE_NOTHROW(lineStyle->SetEnabled(true));   
     }
 
-    SECTION("Инвалидация кэша стилей при изменении группы") {
+    SECTION("Инвалидация кэша стилей при изменении группы") 
+    {
         auto sty1 = group->GetLineStyle();
         group->RemoveShape(0);
         auto sty2 = group->GetLineStyle();

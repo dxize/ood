@@ -1,14 +1,16 @@
 #pragma once
 #include "Icanvas.h"
 #include <iostream>
-#include <cstddef>  // for size_t
+#include <cstddef>  
 
 class StdoutCanvas : public ICanvas 
 {
 public:
     void SetLineColor(RGBAColor color) override 
     {
-        std::cout << "SetLineColor(" << (int)color.r << ", " << (int)color.g << ", " << (int)color.b << ", " << (int)color.a << ")" << std::endl;
+        std::cout << "SetLineColor(" << static_cast<int>(color.r) << ", " 
+            << static_cast<int>(color.g) << ", " << static_cast<int>(color.b) << ", "
+            << static_cast<int>(color.a) << ")" << std::endl;
     }
 
     void SetLineWidth(double width) override 
@@ -23,7 +25,9 @@ public:
 
     void SetFillColor(RGBAColor color) override 
     {
-        std::cout << "SetFillColor(" << (int)color.r << ", " << (int)color.g << ", " << (int)color.b << ", " << (int)color.a << ")" << std::endl;
+        std::cout << "SetFillColor(" << static_cast<int>(color.r) << ", "
+            << static_cast<int>(color.g) << ", " << static_cast<int>(color.b) << ", "
+            << static_cast<int>(color.a) << ")" << std::endl;
     }
 
     void FillPolygon(const std::vector<Point>& points) override 

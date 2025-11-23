@@ -2,7 +2,7 @@
 #include "Istyle.h"
 #include "GroupShape.h"
 #include <functional>
-#include <cstddef>  // for size_t
+#include <cstddef>  
 
 class CompoundLineStyle : public ILineStyle 
 {
