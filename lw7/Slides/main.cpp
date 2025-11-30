@@ -13,7 +13,7 @@ int main()
     base->GetLineStyle()->SetColor({ 0, 0, 0, 255 });
     base->GetLineStyle()->SetThickness(2.0);
 
-    auto roof = std::make_shared<TriangleShape>(Rect(80, 100, 240, 100));
+    auto roof = std::make_shared<TriangleShape>(Rect(80, 100, 240, 100));   
     roof->GetFillStyle()->SetColor({ 139, 0, 0, 255 }); 
     roof->GetLineStyle()->SetColor({ 0, 0, 0, 255 });
     roof->GetLineStyle()->SetThickness(2.0);

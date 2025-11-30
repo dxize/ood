@@ -60,7 +60,7 @@ void GroupShape::SetFrame(const Rect& newFrame)
     double scaleY = newFrame.height / oldFrame.height;
     double offsetX = newFrame.x - oldFrame.x * scaleX;
     double offsetY = newFrame.y - oldFrame.y * scaleY;
-
+        
     for (auto& shape : shapes) 
     {
         Rect childFrame = shape->GetFrame();

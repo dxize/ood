@@ -31,10 +31,6 @@ std::optional<T> CompoundLineStyle::GetUniformValue(std::function<std::optional<
         return std::nullopt;
     }
     auto firstValue = getter(group->GetShapeAt(0)->GetLineStyle());
-    if (!firstValue) 
-    {
-        return std::nullopt;
-    }
     for (size_t i = 1; i < group->GetShapeCount(); ++i) 
     {
         auto value = getter(group->GetShapeAt(i)->GetLineStyle());
@@ -109,10 +105,6 @@ std::optional<T> CompoundFillStyle::GetUniformValue(std::function<std::optional<
         return std::nullopt;
     }
     auto firstValue = getter(group->GetShapeAt(0)->GetFillStyle());
-    if (!firstValue) 
-    {
-        return std::nullopt;
-    }
     for (size_t i = 1; i < group->GetShapeCount(); ++i) 
     {
         auto value = getter(group->GetShapeAt(i)->GetFillStyle());
