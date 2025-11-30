@@ -9,10 +9,32 @@
 class CoutCapture
 {
 public:
-    CoutCapture() : m_old(std::cout.rdbuf(m_buffer.rdbuf())) {}
-    ~CoutCapture() { std::cout.rdbuf(m_old); }
-    std::string GetOutput() const { return m_buffer.str(); }
-    void Clear() { m_buffer.str(""); m_buffer.clear(); }
+    CoutCapture() 
+        : m_old(std::cout.rdbuf(m_buffer.rdbuf())) 
+        //std::streambuf* current = std::cout.rdbuf();
+        // Просто ВОЗВРАЩАЕТ указатель на текущий буфер
+        // НЕ изменяет ничего
+        //std::streambuf* old = std::cout.rdbuf(new_buffer);
+        // 1. Заменяет буфер на new_buffer
+        // 2. ВОЗВРАЩАЕТ старый буфер (который был до замены)
+    {
+    }
+
+    ~CoutCapture() 
+    { 
+        std::cout.rdbuf(m_old); 
+    }
+
+    std::string GetOutput() const 
+    { 
+        return m_buffer.str(); 
+    }
+
+    void Clear() 
+    { 
+        m_buffer.str(""); 
+        m_buffer.clear(); 
+    }
 
 private:
     std::stringstream m_buffer;
@@ -228,7 +250,7 @@ TEST_CASE("with_state::SoldState - ToString", "[with_state][sold][tostring]")
 
     // После выдачи состояние меняется, но в состоянии Sold ToString вернул бы "delivering a gumball"
     // Это проверяется косвенно через поведение автомата
-    REQUIRE(capture.GetOutput().find("A gumball comes rolling out") != std::string::npos);
+    REQUIRE(capture.GetOutput().find("A gumball comes rolling out the slot...") != std::string::npos);
 }
 
 // ============================================================================
