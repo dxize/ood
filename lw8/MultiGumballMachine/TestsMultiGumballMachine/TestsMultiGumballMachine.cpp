@@ -7,19 +7,28 @@
 class CoutCapture
 {
 public:
-    CoutCapture() : m_old(std::cout.rdbuf(m_buffer.rdbuf())) {}
-    ~CoutCapture() { std::cout.rdbuf(m_old); }
-    std::string GetOutput() const { return m_buffer.str(); }
-    void Clear() { m_buffer.str(""); m_buffer.clear(); }
+    CoutCapture() : m_old(std::cout.rdbuf(m_buffer.rdbuf())) 
+    {
+    }
+    ~CoutCapture() 
+    { 
+        std::cout.rdbuf(m_old); 
+    }
+    std::string GetOutput() const 
+    {
+        return m_buffer.str();
+    }
+    void Clear() 
+    { 
+        m_buffer.str(""); 
+        m_buffer.clear(); 
+    }
 private:
     std::stringstream m_buffer;
     std::streambuf* m_old;
 };
 
-// ============================================================================
 // ТЕСТЫ ДЛЯ НАИВНОЙ РЕАЛИЗАЦИИ - НОВЫЙ ФУНКЦИОНАЛ
-// ============================================================================
-
 TEST_CASE("naive - Вставка 1 монетки", "[naive][insert]")
 {
     naive_multi::MultiGumballMachine machine(10);
@@ -355,10 +364,7 @@ TEST_CASE("naive - Сложный сценарий с чередованием операций", "[naive][complex]"
     REQUIRE(machine.GetQuarterCount() == 0);
 }
 
-// ============================================================================
 // ТЕСТЫ ДЛЯ РЕАЛИЗАЦИИ С ПАТТЕРНОМ STATE - НОВЫЙ ФУНКЦИОНАЛ
-// ============================================================================
-
 TEST_CASE("state - Вставка 1 монетки", "[state][insert]")
 {
     with_state_multi::MultiGumballMachine machine(10);

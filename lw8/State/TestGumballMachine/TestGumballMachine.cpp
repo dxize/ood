@@ -5,7 +5,6 @@
 #include "../GumBallMachineWithDynamicallyCreatedState.h" 
 #include "../GumBallMachineWithState.h" 
 
-// Вспомогательный класс для перехвата вывода в cout
 class CoutCapture
 {
 public:
@@ -41,10 +40,8 @@ private:
     std::streambuf* m_old;
 };
 
-// ============================================================================
-// Тесты для with_state::GumballMachine (паттерн State с состояниями-членами)
-// ============================================================================
 
+// Тесты для with_state::GumballMachine (паттерн State с состояниями-членами)
 TEST_CASE("GumballMachine with_state - Начальные состояния", "[with_state][initial]")
 {
     SECTION("Автомат с жвачками должен начинать в состоянии NoQuarter")
@@ -78,10 +75,7 @@ TEST_CASE("GumballMachine with_state - Начальные состояния", "
     }
 }
 
-// ============================================================================
 // NoQuarterState - ВСЕ методы
-// ============================================================================
-
 TEST_CASE("with_state::NoQuarterState - Вставка монеты", "[with_state][no_quarter][insert]")
 {
     with_state::GumballMachine machine(5);
@@ -127,10 +121,7 @@ TEST_CASE("with_state::NoQuarterState - ToString", "[with_state][no_quarter][tos
     REQUIRE(output.find("waiting for quarter") != std::string::npos);
 }
 
-// ============================================================================
 // HasQuarterState - ВСЕ методы
-// ============================================================================
-
 TEST_CASE("with_state::HasQuarterState - Вставка еще одной монеты", "[with_state][has_quarter][insert]")
 {
     with_state::GumballMachine machine(5);
@@ -174,12 +165,8 @@ TEST_CASE("with_state::HasQuarterState - Поворот рукоятки", "[wit
 
 TEST_CASE("with_state::HasQuarterState - Dispense (не должна выдавать)", "[with_state][has_quarter][dispense]")
 {
-    // Dispense вызывается автоматически после TurnCrank, но мы проверяем что из HasQuarter она не выдает
     with_state::GumballMachine machine(5);
     machine.InsertQuarter();
-    // После поворота рукоятки состояние меняется на Sold перед вызовом Dispense
-    // Поэтому напрямую через публичный интерфейс мы не можем проверить Dispense из HasQuarter
-    // Но проверяем что TurnCrank работает корректно
     machine.TurnCrank();
     REQUIRE(machine.ToString().find("4 gumballs") != std::string::npos);
 }
@@ -192,15 +179,10 @@ TEST_CASE("with_state::HasQuarterState - ToString", "[with_state][has_quarter][t
     REQUIRE(output.find("waiting for turn of crank") != std::string::npos);
 }
 
-// ============================================================================
-// SoldState - ВСЕ методы
-// ============================================================================
 
+// SoldState - ВСЕ методы
 TEST_CASE("with_state::SoldState - Вставка монеты (во время выдачи)", "[with_state][sold][insert]")
 {
-    // Примечание: Мы не можем напрямую вызывать методы в состоянии Sold через публичный интерфейс
-    // потому что TurnCrank автоматически вызывает Dispense, которая переводит из этого состояния
-    // Но мы можем проверить поведение косвенно
     with_state::GumballMachine machine(5);
     machine.InsertQuarter();
 
@@ -208,7 +190,6 @@ TEST_CASE("with_state::SoldState - Вставка монеты (во время 
     machine.TurnCrank();
     std::string output = capture.GetOutput();
 
-    // После TurnCrank автоматически вызывается Dispense и состояние меняется
     REQUIRE(output.find("You turned...") != std::string::npos);
     REQUIRE(output.find("A gumball comes rolling out the slot...") != std::string::npos);
 }
@@ -241,22 +222,16 @@ TEST_CASE("with_state::SoldState - Dispense переход в SoldOut при п�
 
 TEST_CASE("with_state::SoldState - ToString", "[with_state][sold][tostring]")
 {
-    // Мы можем проверить ToString через переход
     with_state::GumballMachine machine(1);
     machine.InsertQuarter();
 
     CoutCapture capture;
     machine.TurnCrank();
 
-    // После выдачи состояние меняется, но в состоянии Sold ToString вернул бы "delivering a gumball"
-    // Это проверяется косвенно через поведение автомата
     REQUIRE(capture.GetOutput().find("A gumball comes rolling out the slot...") != std::string::npos);
 }
 
-// ============================================================================
 // SoldOutState - ВСЕ методы
-// ============================================================================
-
 TEST_CASE("with_state::SoldOutState - Вставка монеты", "[with_state][sold_out][insert]")
 {
     with_state::GumballMachine machine(0);
@@ -312,10 +287,7 @@ TEST_CASE("with_state::SoldOutState - ToString", "[with_state][sold_out][tostrin
     REQUIRE(output.find("sold out") != std::string::npos);
 }
 
-// ============================================================================
 // GumballMachine - Сложные сценарии
-// ============================================================================
-
 TEST_CASE("with_state::GumballMachine - Несколько успешных покупок", "[with_state][scenarios]")
 {
     with_state::GumballMachine machine(3);
@@ -372,10 +344,7 @@ TEST_CASE("with_state::GumballMachine - Все операции на пусто�
     REQUIRE(output.find("sold out") != std::string::npos);
 }
 
-// ============================================================================
 // Тесты для with_dynamic_state::GumballMachine
-// ============================================================================
-
 TEST_CASE("GumballMachine with_dynamic_state - Начальные состояния", "[with_dynamic_state][initial]")
 {
     SECTION("Автомат с жвачками начинает в состоянии NoQuarter")
@@ -395,10 +364,7 @@ TEST_CASE("GumballMachine with_dynamic_state - Начальные состоян
     }
 }
 
-// ============================================================================
 // with_dynamic_state::NoQuarterState - ВСЕ методы
-// ============================================================================
-
 TEST_CASE("with_dynamic_state::NoQuarterState - Вставка монеты", "[with_dynamic_state][no_quarter][insert]")
 {
     with_dynamic_state::GumballMachine machine(5);
@@ -441,10 +407,7 @@ TEST_CASE("with_dynamic_state::NoQuarterState - ToString", "[with_dynamic_state]
     REQUIRE(output.find("waiting for quarter") != std::string::npos);
 }
 
-// ============================================================================
 // with_dynamic_state::HasQuarterState - ВСЕ методы
-// ============================================================================
-
 TEST_CASE("with_dynamic_state::HasQuarterState - Вставка еще одной монеты", "[with_dynamic_state][has_quarter][insert]")
 {
     with_dynamic_state::GumballMachine machine(5);
@@ -491,10 +454,7 @@ TEST_CASE("with_dynamic_state::HasQuarterState - ToString", "[with_dynamic_state
     REQUIRE(output.find("waiting for turn of crank") != std::string::npos);
 }
 
-// ============================================================================
 // with_dynamic_state::SoldState - ВСЕ методы
-// ============================================================================
-
 TEST_CASE("with_dynamic_state::SoldState - Dispense переход в NoQuarter", "[with_dynamic_state][sold][dispense]")
 {
     with_dynamic_state::GumballMachine machine(5);
@@ -527,10 +487,7 @@ TEST_CASE("with_dynamic_state::SoldState - ToString", "[with_dynamic_state][sold
     REQUIRE(machine.ToString().find("waiting for quarter") != std::string::npos);
 }
 
-// ============================================================================
 // with_dynamic_state::SoldOutState - ВСЕ методы
-// ============================================================================
-
 TEST_CASE("with_dynamic_state::SoldOutState - Вставка монеты", "[with_dynamic_state][sold_out][insert]")
 {
     with_dynamic_state::GumballMachine machine(0);
@@ -572,10 +529,7 @@ TEST_CASE("with_dynamic_state::SoldOutState - ToString", "[with_dynamic_state][s
     REQUIRE(output.find("sold out") != std::string::npos);
 }
 
-// ============================================================================
 // with_dynamic_state::GumballMachine - Сложные сценарии
-// ============================================================================
-
 TEST_CASE("with_dynamic_state::GumballMachine - Полный цикл покупок", "[with_dynamic_state][scenarios]")
 {
     with_dynamic_state::GumballMachine machine(3);
@@ -629,10 +583,7 @@ TEST_CASE("with_dynamic_state::GumballMachine - Проверка переход�
     REQUIRE(machine.ToString().find("sold out") != std::string::npos);
 }
 
-// ============================================================================
 // Граничные случаи и пограничные условия
-// ============================================================================
-
 TEST_CASE("Граничные случаи - Пограничные условия", "[edge_cases]")
 {
     SECTION("with_state: Автомат ровно с 1 жвачкой")

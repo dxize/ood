@@ -3,11 +3,6 @@
 #include <format>
 #include <iostream>
 
-
-// ============================================================================
-// РЕАЛИЗАЦИЯ С ПАТТЕРНОМ STATE
-// ============================================================================
-
 namespace with_state_multi
 {
 	struct IState
@@ -216,7 +211,7 @@ namespace with_state_multi
 	private:
 		IMultiGumballMachine& m_gumballMachine;
 	};
-
+	//как реализовать без приватного  эмплиментирования
 	class MultiGumballMachine : private IMultiGumballMachine
 	{
 	public:
