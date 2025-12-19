@@ -7,7 +7,6 @@ int Sign(int v)
     return (v > 0) - (v < 0);
 }
 
-// ============ НЕкрутая (крутая) линия — dy > dx ============
 void DrawSteepLine(Image& img, Point a, Point b, char c)
 {
     int dx = abs(b.x - a.x);
@@ -33,7 +32,6 @@ void DrawSteepLine(Image& img, Point a, Point b, char c)
     }
 }
 
-// ============ Пологая линия — dx ≥ dy ============
 void DrawSlopeLine(Image& img, Point a, Point b, char c)
 {
     int dx = abs(b.x - a.x);
@@ -62,7 +60,6 @@ void DrawSlopeLine(Image& img, Point a, Point b, char c)
     }
 }
 
-// ================== Общая функция ==================
 void DrawLine(Image& img, Point a, Point b, char c)
 {
     int dx = abs(b.x - a.x);

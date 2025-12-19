@@ -158,7 +158,6 @@ TEST_CASE("Изображение изначально использует од
 
     Image img({ 16, 16 }, '.');
 
-    // 4 тайла в сетке 2x2, но все ссылаются на один объект
     REQUIRE(Tile::GetInstanceCount() == initialCount + 1);
 }
 
@@ -210,9 +209,8 @@ TEST_CASE("Изображение создаёт отдельные тайлы �
     REQUIRE(Tile::GetInstanceCount() == initialCount + 4);
 
     img.SetPixel({ 10, 10 }, 'D');  // тайл (1,1) уже единственный, не копируется!
-    REQUIRE(Tile::GetInstanceCount() == initialCount + 4); // ← правильное значение!
+    REQUIRE(Tile::GetInstanceCount() == initialCount + 4); 
 
-    // Проверяем что все пиксели установлены
     REQUIRE(img.GetPixel({ 0, 0 }) == 'A');
     REQUIRE(img.GetPixel({ 10, 0 }) == 'B');
     REQUIRE(img.GetPixel({ 0, 10 }) == 'C');
@@ -228,7 +226,6 @@ TEST_CASE("Чтение изображения не создаёт новые т
     for (int i = 0; i < 100; i++)
     {
         char c = img.GetPixel({ 5, 5 });
-        (void)c;
     }
 
     REQUIRE(Tile::GetInstanceCount() == initialCount + 1);
@@ -263,13 +260,13 @@ TEST_CASE("Изображение вычисляет правильное кол
     SECTION("Изображение 9x9 использует сетку 2x2")
     {
         Image img({ 9, 9 }, '.');
-        REQUIRE(Tile::GetInstanceCount() == initialCount + 1); // CoW!
+        REQUIRE(Tile::GetInstanceCount() == initialCount + 1); 
     }
 
     SECTION("Изображение 16x8 использует сетку 2x1")
     {
         Image img({ 16, 8 }, '.');
-        REQUIRE(Tile::GetInstanceCount() == initialCount + 1); // CoW!
+        REQUIRE(Tile::GetInstanceCount() == initialCount + 1); 
     }
 }
 
