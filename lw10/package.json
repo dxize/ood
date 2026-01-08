@@ -1,0 +1,21 @@
+{
+  "name": "harmonics-chart-electron-ts",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/main/main.js",
+  "description": "Desktop app (Electron + TypeScript) to visualize sum of harmonic functions (sin/cos) using MVVM.",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/copy-static.cjs",
+    "start": "npm run build && electron .",
+    "dev": "tsc -w -p tsconfig.json",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.30",
+    "electron": "^30.0.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.5.4"
+  }
+}

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chart Drawer — Harmonics</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="title">Chart Drawer</div>
+    <div class="subtitle">Сумма гармоник (sin/cos): добавление, удаление, редактирование. Авто‑обновление графика.</div>
+  </header>
+
+  <main class="layout">
+    <section class="panel left">
+      <div class="box">
+        <div class="box-title">Harmonics</div>
+
+        <select id="harmonicsList" size="8" class="listbox"></select>
+
+        <div class="row">
+          <button id="addBtn">Add new</button>
+          <button id="deleteBtn">Delete selected</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">Selected harmonic</div>
+
+        <div class="form">
+          <label class="field">
+            <span>Amplitude</span>
+            <input id="ampInput" type="number" step="0.01" />
+          </label>
+
+          <div class="radio-row">
+            <label class="radio">
+              <input type="radio" name="kind" value="sin" id="sinRadio" />
+              <span>Sin</span>
+            </label>
+            <label class="radio">
+              <input type="radio" name="kind" value="cos" id="cosRadio" />
+              <span>Cos</span>
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Frequency</span>
+            <input id="freqInput" type="number" step="0.01" />
+          </label>
+
+          <label class="field">
+            <span>Phase</span>
+            <input id="phaseInput" type="number" step="0.01" />
+          </label>
+
+          <div class="hint" id="selectedLabel">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel right">
+      <div class="tabs">
+        <button class="tab active" id="tabChart">Chart</button>
+        <button class="tab" id="tabTable">Table</button>
+      </div>
+
+      <div class="content">
+        <div id="chartView" class="view active">
+          <canvas id="chartCanvas" width="640" height="420"></canvas>
+          <div class="small">x: 0..5, step 0.05</div>
+        </div>
+
+        <div id="tableView" class="view">
+          <div class="table-wrap">
+            <table class="table" id="dataTable">
+              <thead>
+                <tr><th>x</th><th>y</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Простое модальное окно “Add new harmonic” -->
+  <div id="modalBackdrop" class="backdrop hidden"></div>
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-title" id="modalTitle">Add new harmonic</div>
+
+    <div class="form">
+      <label class="field">
+        <span>Amplitude</span>
+        <input id="modalAmp" type="number" step="0.01" value="1" />
+      </label>
+
+      <div class="radio-row">
+        <label class="radio">
+          <input type="radio" name="modalKind" value="sin" id="modalSin" checked />
+          <span>Sin</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="modalKind" value="cos" id="modalCos" />
+          <span>Cos</span>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Frequency</span>
+        <input id="modalFreq" type="number" step="0.01" value="1" />
+      </label>
+
+      <label class="field">
+        <span>Phase</span>
+        <input id="modalPhase" type="number" step="0.01" value="0" />
+      </label>
+
+      <div class="hint" id="modalPreview">1*sin(1*x + 0)</div>
+
+      <div class="row end">
+        <button id="modalOk">OK</button>
+        <button id="modalCancel" class="secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./boot.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+# Котик рядом с домиком (узнаваемая композиция)
+# домик
+rectangle yellow 420 260 680 480
+triangle red 410 260 550 150 690 260
+rectangle black 520 340 590 480          # дверь
+
+# окна
+rectangle blue 450 300 500 350
+rectangle blue 600 300 650 350
+rectangle black 447 297 503 353
+rectangle black 597 297 653 353
+
+# котик (тело + голова)
+ellipse pink 220 410 70 45               # туловище
+ellipse pink 145 380 45 40               # голова
+
+# ушки (треугольники)
+triangle pink 120 350 135 320 150 350
+triangle pink 160 350 175 320 190 350
+
+# глаза
+ellipse black 130 375 6 9
+ellipse black 160 375 6 9
+
+# нос
+triangle red 145 392 138 404 152 404
+
+# усы
+# слева
+triangle black 112 405 100 402 112 399
+triangle black 112 410 100 410 112 410
+triangle black 112 415 100 418 112 421
+# справа
+triangle black 178 405 190 402 178 399
+triangle black 178 410 190 410 178 410
+triangle black 178 415 190 418 178 421
+
+# хвост (многоугольник)
+polygon pink 290 430 35 6
