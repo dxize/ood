@@ -40,8 +40,7 @@ function createWindow() {
         width: 980,
         height: 640,
         webPreferences: {
-            // Для учебного проекта так проще: renderer может require(...) скомпилированные TS-модули.
-            nodeIntegration: true,
+            nodeIntegration: true, // Разрешает в HTML/JS внутри окна использовать Node.js функции, например require(...)
             contextIsolation: false
         }
     });
@@ -50,12 +49,7 @@ function createWindow() {
 }
 electron_1.app.whenReady().then(() => {
     createWindow();
-    electron_1.app.on("activate", () => {
-        if (electron_1.BrowserWindow.getAllWindows().length === 0)
-            createWindow();
-    });
 });
 electron_1.app.on("window-all-closed", () => {
-    if (process.platform !== "darwin")
-        electron_1.app.quit();
+    electron_1.app.quit();
 });

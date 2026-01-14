@@ -36,7 +36,6 @@ namespace app
             }
             catch (const std::exception& e)
             {
-                // Сообщение с номером строки — чтобы быстро искать ошибку во входном файле.
                 throw std::runtime_error("Line " + std::to_string(lineNo) + ": " + e.what());
             }
         }

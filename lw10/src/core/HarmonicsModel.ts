@@ -6,7 +6,7 @@ export class HarmonicsModel extends EventEmitter {
   private harmonics: Harmonic[] = [];
 
   list(): Harmonic[] {
-    // наружу отдаём копию массива (чтобы не ломали напрямую)
+    // наружу отдаём копию массива (нельзя заменить сам массив)
     return [...this.harmonics];
   }
 
@@ -14,7 +14,7 @@ export class HarmonicsModel extends EventEmitter {
     const id = cryptoLikeId();
     const h = new Harmonic(id, input);
     this.harmonics.push(h);
-    this.emit("changed");
+    this.emit("changed"); //emit("changed") — “событие произошло”
     return h;
   }
 
@@ -28,10 +28,7 @@ export class HarmonicsModel extends EventEmitter {
     const h = this.harmonics.find(x => x.id === id);
     if (!h) return;
 
-    if (patch.amplitude !== undefined) h.amplitude = patch.amplitude;
-    if (patch.frequency !== undefined) h.frequency = patch.frequency;
-    if (patch.phase !== undefined) h.phase = patch.phase;
-    if (patch.kind !== undefined) h.kind = patch.kind;
+    h.update(patch);
 
     this.emit("changed");
   }
@@ -44,13 +41,10 @@ export class HarmonicsModel extends EventEmitter {
     const xs: number[] = [];
     const ys: number[] = [];
 
-    // защита от плохих параметров
     if (step <= 0) step = 0.05;
     if (xTo < xFrom) [xFrom, xTo] = [xTo, xFrom];
 
-    // строим в точности как в “табличке”: 0, 0.05, 0.10, ...
     for (let x = xFrom; x <= xTo + 1e-12; x += step) {
-      // округление чтобы не было 0.1500000000002
       const xr = Math.round(x * 1e12) / 1e12;
       xs.push(xr);
       ys.push(this.sumAt(xr));
@@ -60,7 +54,5 @@ export class HarmonicsModel extends EventEmitter {
 }
 
 function cryptoLikeId(): string {
-  // Без внешних зависимостей: достаточно для идентификатора.
-  // (Не криптостойко — и не нужно.)
   return Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2);
 }

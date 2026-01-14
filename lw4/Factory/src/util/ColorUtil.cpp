@@ -47,4 +47,4 @@ namespace util
     {
         return ToSvgColor(c);
     }
-} // namespace util
+} 

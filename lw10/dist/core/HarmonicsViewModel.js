@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HarmonicsViewModel = void 0;
-exports.parseKind = parseKind;
 const events_1 = require("events");
 /**
  * MVVM:
@@ -53,13 +52,11 @@ class HarmonicsViewModel extends events_1.EventEmitter {
         if (!this.selectedId)
             return;
         this.model.remove(this.selectedId);
-        // событие “changed” придёт от модели
     }
     updateSelected(patch) {
         if (!this.selectedId)
             return;
         this.model.update(this.selectedId, patch);
-        // событие “changed” придёт от модели
     }
     // полезно для формы “Add new harmonic”
     static defaultHarmonic() {
@@ -67,8 +64,3 @@ class HarmonicsViewModel extends events_1.EventEmitter {
     }
 }
 exports.HarmonicsViewModel = HarmonicsViewModel;
-function parseKind(value) {
-    if (value === "sin" || value === "cos")
-        return value;
-    return null;
-}

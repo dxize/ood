@@ -6,9 +6,8 @@ function createWindow(): void {
     width: 980,
     height: 640,
     webPreferences: {
-      // Для учебного проекта так проще: renderer может require(...) скомпилированные TS-модули.
-      nodeIntegration: true,
-      contextIsolation: false
+      nodeIntegration: true, // Разрешает в HTML/JS внутри окна использовать Node.js функции, например require(...)
+      contextIsolation: false 
     }
   });
 
@@ -18,12 +17,8 @@ function createWindow(): void {
 
 app.whenReady().then(() => {
   createWindow();
-
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
+  app.quit();
 });

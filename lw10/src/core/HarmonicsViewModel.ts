@@ -63,22 +63,10 @@ export class HarmonicsViewModel extends EventEmitter {
   deleteSelected(): void {
     if (!this.selectedId) return;
     this.model.remove(this.selectedId);
-    // событие “changed” придёт от модели
   }
 
   updateSelected(patch: Partial<HarmonicInput>): void {
     if (!this.selectedId) return;
     this.model.update(this.selectedId, patch);
-    // событие “changed” придёт от модели
   }
-
-  // полезно для формы “Add new harmonic”
-  static defaultHarmonic(): HarmonicInput {
-    return { amplitude: 1, frequency: 1, phase: 0, kind: "sin" };
-  }
-}
-
-export function parseKind(value: string): HarmonicKind | null {
-  if (value === "sin" || value === "cos") return value;
-  return null;
 }

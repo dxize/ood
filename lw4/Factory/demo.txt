@@ -1,39 +1,92 @@
-# Котик рядом с домиком (узнаваемая композиция)
-# домик
-rectangle yellow 420 260 680 480
-triangle red 410 260 550 150 690 260
-rectangle black 520 340 590 480          # дверь
+# ФОН / ЗЕМЛЯ 
+rectangle green 0 480 800 600
 
-# окна
-rectangle blue 450 300 500 350
-rectangle blue 600 300 650 350
-rectangle black 447 297 503 353
-rectangle black 597 297 653 353
+# дорожка к двери (узкая и по центру двери)
+rectangle yellow 545 480 575 600
 
-# котик (тело + голова)
-ellipse pink 220 410 70 45               # туловище
-ellipse pink 145 380 45 40               # голова
+#ДОМИК
+# стены + тонкая рамка
+rectangle black 418 218 682 482
+rectangle yellow 420 220 680 480
 
-# ушки (треугольники)
-triangle pink 120 350 135 320 150 350
-triangle pink 160 350 175 320 190 350
+# крыша (сначала рамка чуть больше, потом основная)
+triangle black 405 222 550 110 695 222
+triangle red 410 220 550 120 690 220
 
-# глаза
-ellipse black 130 375 6 9
-ellipse black 160 375 6 9
+# труба (на правом скате)
+rectangle black 607 137 648 223
+rectangle red 610 140 645 220
 
-# нос
-triangle red 145 392 138 404 152 404
+# дым (3 кружка)
+ellipse black 660 110 8 8
+ellipse black 678 92 10 10
+ellipse black 698 72 12 12
 
-# усы
-# слева
-triangle black 112 405 100 402 112 399
-triangle black 112 410 100 410 112 410
-triangle black 112 415 100 418 112 421
-# справа
-triangle black 178 405 190 402 178 399
-triangle black 178 410 190 410 178 410
-triangle black 178 415 190 418 178 421
+# дверь (по центру)
+rectangle black 532 328 588 482
+rectangle black 535 330 585 480
+ellipse black 578 405 3 3  # ручка
 
-# хвост (многоугольник)
-polygon pink 290 430 35 6
+# окна (одинаковые)
+# левое
+rectangle black 452 262 518 328
+rectangle blue 458 268 512 322
+rectangle black 484 268 486 322   # вертикальный переплёт
+rectangle black 458 294 512 296   # горизонтальный переплёт
+
+# правое
+rectangle black 582 262 648 328
+rectangle blue 588 268 642 322
+rectangle black 614 268 616 322
+rectangle black 588 294 642 296
+
+# КОТИК 
+# тело (контур + тело)
+ellipse black 210 415 77 47
+ellipse pink 210 415 75 45
+
+# голова (контур + голова)
+ellipse black 135 385 47 40
+ellipse pink 135 385 45 38
+
+# ушки (контур + ухо)
+triangle black 110 365 125 330 140 365
+triangle pink 112 365 125 338 138 365
+
+triangle black 150 365 165 330 180 365
+triangle pink 152 365 165 338 178 365
+
+# глаза (обводка + зрачки)
+ellipse black 122 385 7 10
+ellipse black 148 385 7 10
+ellipse black 122 388 3 4
+ellipse black 148 388 3 4
+
+# носик + ротик
+triangle red 135 402 128 412 142 412
+ellipse black 128 418 6 3
+ellipse black 142 418 6 3
+
+# усы (слева/справа — по 3, ровно)
+triangle black 104 405 90 402 104 399
+triangle black 104 410 90 410 104 410
+triangle black 104 415 90 418 104 421
+
+triangle black 166 405 180 402 166 399
+triangle black 166 410 180 410 166 410
+triangle black 166 415 180 418 166 421
+
+# лапки (4 небольших)
+ellipse black 175 455 12 7
+ellipse pink 175 455 10 5
+ellipse black 200 462 12 7
+ellipse pink 200 462 10 5
+ellipse black 230 462 12 7
+ellipse pink 230 462 10 5
+ellipse black 255 455 12 7
+ellipse pink 255 455 10 5
+
+# хвост (две “звёздочки” многоугольника для изгиба)
+polygon black 295 430 37 6
+polygon pink 292 430 35 6
+polygon pink 312 405 24 6

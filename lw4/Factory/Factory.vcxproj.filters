@@ -15,7 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="commands.txt" />
     <Text Include="demo.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -6,10 +6,10 @@
 
 namespace app
 {
-class IDesigner
-{
-public:
-    virtual ~IDesigner() = default;
-    virtual domain::PictureDraft CreateDraft(std::istream& input) const = 0;
-};
-} // namespace app
+    class IDesigner
+    {
+    public:
+        virtual ~IDesigner() = default;
+        virtual domain::PictureDraft CreateDraft(std::istream& input) const = 0;
+    };
+} 

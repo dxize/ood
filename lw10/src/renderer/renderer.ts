@@ -1,8 +1,8 @@
 /* Renderer (View): DOM + Canvas.
- * Здесь нет бизнес‑логики расчётов — она в src/core.
+ * Здесь нет бизнес-логики расчётов — она в src/core.
  */
 import { HarmonicsModel } from "../core/HarmonicsModel";
-import { HarmonicsViewModel, parseKind } from "../core/HarmonicsViewModel";
+import { HarmonicsViewModel} from "../core/HarmonicsViewModel";
 import { HarmonicInput } from "../core/types";
 
 const model = new HarmonicsModel();
@@ -13,7 +13,7 @@ vm.addHarmonic({ amplitude: 3, frequency: -3, phase: 0.3, kind: "sin" });
 vm.addHarmonic({ amplitude: 4.38, frequency: 2.25, phase: 1.5, kind: "sin" });
 vm.addHarmonic({ amplitude: 1, frequency: 1, phase: 5, kind: "cos" });
 
-/** ====== DOM refs ====== */
+/*======  ссылки на элементы DOM-дерева  ====== */
 const harmonicsList = document.getElementById("harmonicsList") as HTMLSelectElement;
 
 const ampInput = document.getElementById("ampInput") as HTMLInputElement;
@@ -35,7 +35,7 @@ const canvas = document.getElementById("chartCanvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d");
 if (!ctx) throw new Error("Canvas 2D context not supported");
 
-// Modal
+// Модальное окно
 const modalBackdrop = document.getElementById("modalBackdrop") as HTMLDivElement;
 const modal = document.getElementById("modal") as HTMLDivElement;
 const modalAmp = document.getElementById("modalAmp") as HTMLInputElement;
@@ -49,7 +49,7 @@ const modalPreview = document.getElementById("modalPreview") as HTMLDivElement;
 
 const tableBody = (document.querySelector("#dataTable tbody") as HTMLTableSectionElement);
 
-/** ====== Helpers ====== */
+/** ====== Вспомогательные функции ====== */
 function toNumberSafe(value: string): number | null {
   if (value.trim() === "") return null;
   const n = Number(value);
@@ -97,12 +97,12 @@ function updateModalPreview(): void {
   modalPreview.textContent = `${input.amplitude}*${fn}(${input.frequency}*x ${sign} ${absP})`;
 }
 
-/** ====== View updates ====== */
+/** ====== Обновление интерфейса (отрисовка) ====== */
 function render(): void {
   renderList();
   renderEditor();
   renderChart();
-  // таблицу обновляем всегда, но она может быть скрыта вкладкой
+  // Таблицу обновляем всегда, но она может быть скрыта вкладкой
   renderTable();
 }
 
@@ -173,7 +173,7 @@ function renderTable(): void {
   }
 }
 
-/** ====== Canvas drawing (без библиотек) ====== */
+/** ====== Рисование на Canvas (без библиотек) ====== */
 function drawSeriesOnCanvas(
   ctx: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement,
@@ -183,12 +183,12 @@ function drawSeriesOnCanvas(
   const w = canvas.width;
   const h = canvas.height;
 
-  // background
+  // Фон
   ctx.clearRect(0, 0, w, h);
   ctx.fillStyle = "#0f1116";
   ctx.fillRect(0, 0, w, h);
 
-  // paddings
+  // Отступы (поля) для области графика
   const padL = 48;
   const padR = 14;
   const padT = 14;
@@ -197,27 +197,29 @@ function drawSeriesOnCanvas(
   const plotW = w - padL - padR;
   const plotH = h - padT - padB;
 
-  // bounds
+  // Диапазон по X
   const minX = Math.min(...xs);
   const maxX = Math.max(...xs);
 
+  // Диапазон по Y
   let minY = Math.min(...ys);
   let maxY = Math.max(...ys);
   if (minY === maxY) {
-    // чтобы линия не была “в ноль”
+    // Чтобы линия не была “в ноль”
     minY -= 1;
     maxY += 1;
   }
 
-  // слегка расширим диапазон по Y
+  // Немного расширим диапазон по Y
   const yPad = (maxY - minY) * 0.08;
   minY -= yPad;
   maxY += yPad;
 
+  // Перевод координат (x,y) в пиксели Canvas
   const xToPx = (x: number) => padL + ((x - minX) / (maxX - minX)) * plotW;
   const yToPx = (y: number) => padT + (1 - (y - minY) / (maxY - minY)) * plotH;
 
-  // grid + axes
+  // Сетка + оси
   ctx.strokeStyle = "rgba(255,255,255,0.10)";
   ctx.lineWidth = 1;
 
@@ -237,7 +239,7 @@ function drawSeriesOnCanvas(
     ctx.stroke();
   }
 
-  // axis line for y=0 if in range
+  // Линия оси y=0, если она попадает в диапазон
   if (minY <= 0 && 0 <= maxY) {
     ctx.strokeStyle = "rgba(255,255,255,0.22)";
     ctx.beginPath();
@@ -246,7 +248,7 @@ function drawSeriesOnCanvas(
     ctx.stroke();
   }
 
-  // draw polyline
+  // Рисуем ломаную (график)
   ctx.strokeStyle = "#7aa2f7";
   ctx.lineWidth = 2;
 
@@ -259,25 +261,25 @@ function drawSeriesOnCanvas(
   }
   ctx.stroke();
 
-  // labels
+  // Подписи
   ctx.fillStyle = "rgba(232,238,247,0.85)";
   ctx.font = "12px system-ui, Segoe UI, Arial";
   ctx.fillText(`x: ${minX}..${maxX}`, padL, h - 12);
   ctx.fillText(`y: ${minY.toFixed(2)}..${maxY.toFixed(2)}`, padL + 120, h - 12);
 }
 
-/** ====== Wiring ====== */
+/** ====== Связывание UI и логики (обработчики событий) ====== */
 
-// auto‑update on any VM change
+// Авто-обновление интерфейса при любых изменениях во ViewModel
 vm.on("changed", render);
 
-// selection
+// Выбор гармоники в списке
 harmonicsList.addEventListener("change", () => {
   const id = harmonicsList.value || null;
   vm.select(id);
 });
 
-// live editing for selected harmonic
+// “Живое” редактирование выбранной гармоники
 ampInput.addEventListener("input", () => {
   const n = toNumberSafe(ampInput.value);
   if (n === null) return;
@@ -302,15 +304,15 @@ cosRadio.addEventListener("change", () => {
   vm.updateSelected({ kind: "cos" });
 });
 
-// buttons
+// Кнопки
 addBtn.addEventListener("click", () => openModal());
 deleteBtn.addEventListener("click", () => vm.deleteSelected());
 
-// tabs
+// Вкладки
 tabChart.addEventListener("click", () => setActiveTab("chart"));
 tabTable.addEventListener("click", () => setActiveTab("table"));
 
-// modal behavior
+// Логика модального окна
 modalBackdrop.addEventListener("click", closeModal);
 modalCancel.addEventListener("click", closeModal);
 modalOk.addEventListener("click", () => {
@@ -325,6 +327,6 @@ modalPhase.addEventListener("input", updateModalPreview);
 modalSin.addEventListener("change", updateModalPreview);
 modalCos.addEventListener("change", updateModalPreview);
 
-// initial render
+// Первичная инициализация
 setActiveTab("chart");
 render();

@@ -5,18 +5,18 @@
 
 namespace domain
 {
-class Rectangle final : public Shape
-{
-public:
-    Rectangle(Color color, Point leftTop, Point rightBottom);
+    class Rectangle final : public Shape
+    {
+    public:
+        Rectangle(Color color, Point leftTop, Point rightBottom);
 
-    void Draw(canvas::ICanvas& canvas) const override;
+        void Draw(canvas::ICanvas& canvas) const override;
 
-    Point GetLeftTop() const { return m_leftTop; }
-    Point GetRightBottom() const { return m_rightBottom; }
+        Point GetLeftTop() const { return m_leftTop; }
+        Point GetRightBottom() const { return m_rightBottom; }
 
-private:
-    Point m_leftTop;
-    Point m_rightBottom;
-};
-} // namespace domain
+    private:
+        Point m_leftTop;
+        Point m_rightBottom;
+    };
+}

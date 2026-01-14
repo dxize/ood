@@ -10,7 +10,7 @@
 #include <string>
 #include <Windows.h>
 
-int main(int argc, char* argv[])
+int main()
 {
 
     SetConsoleCP(65001);
@@ -18,12 +18,10 @@ int main(int argc, char* argv[])
 
     try
     {
-        const std::string svgPath = (argc >= 2) ? argv[1] : "output.svg";
-
-        std::ofstream svg(svgPath, std::ios::binary);
+        std::ofstream svg("output.svg", std::ios::binary);
         if (!svg)
         {
-            std::cerr << "Cannot open SVG output file: " << svgPath << "\n";
+            std::cerr << "Cannot open SVG output file: " << "output.svg" << "\n";
             return 2;
         }
 
@@ -45,4 +43,4 @@ int main(int argc, char* argv[])
         std::cerr << "Error: " << e.what() << "\n";
         return 1;
     }
-}
+}//повторить разницу фабрик
