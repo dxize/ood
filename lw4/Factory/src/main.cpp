@@ -43,4 +43,4 @@ int main()
         std::cerr << "Error: " << e.what() << "\n";
         return 1;
     }
-}//повторить разницу фабрик
+}

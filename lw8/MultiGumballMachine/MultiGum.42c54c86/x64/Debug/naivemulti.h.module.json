@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "MultiGum.42c54c86\\x64\\Debug\\NaiveMulti.h.obj",
+            "outputs": [
+                "C:\\Users\\gimps\\ood\\lw8\\MultiGumballMachine\\MultiGum.42c54c86\\x64\\Debug\\vc143.pdb",
+                "MultiGum.42c54c86\\x64\\Debug\\",
+                "C:\\Users\\gimps\\ood\\lw8\\MultiGumballMachine\\MultiGum.42c54c86\\x64\\Debug\\NaiveMulti.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "NaiveMulti.h",
+                    "source-path": "c:\\users\\gimps\\ood\\lw8\\multigumballmachine\\naivemulti.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

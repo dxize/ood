@@ -1,0 +1,8 @@
+--encrypt 3 --encrypt 100500 --compress orig1.gif output.dat
+--decompress --decrypt 100500 --decrypt 3 output.dat restoredOrig1.gif
+
+
+--encrypt 123 orig1.gif output2.dat
+--decrypt 123 output2.dat restored2.gif
+
+

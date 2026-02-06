@@ -1,17 +1,17 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-/* Renderer (View): DOM + Canvas.
- * Здесь нет бизнес-логики расчётов — она в src/core.
- */
 const HarmonicsModel_1 = require("../core/HarmonicsModel");
 const HarmonicsViewModel_1 = require("../core/HarmonicsViewModel");
+const auto_1 = __importDefault(require("chart.js/auto"));
 const model = new HarmonicsModel_1.HarmonicsModel();
 const vm = new HarmonicsViewModel_1.HarmonicsViewModel(model);
-// Немного стартовых данных (можно убрать — приложение будет пустым)
 vm.addHarmonic({ amplitude: 3, frequency: -3, phase: 0.3, kind: "sin" });
 vm.addHarmonic({ amplitude: 4.38, frequency: 2.25, phase: 1.5, kind: "sin" });
 vm.addHarmonic({ amplitude: 1, frequency: 1, phase: 5, kind: "cos" });
-/*======  ссылки на элементы DOM-дерева  ====== */
+/* ссылки на элементы DOM-дерева */
 const harmonicsList = document.getElementById("harmonicsList");
 const ampInput = document.getElementById("ampInput");
 const freqInput = document.getElementById("freqInput");
@@ -29,7 +29,40 @@ const canvas = document.getElementById("chartCanvas");
 const ctx = canvas.getContext("2d");
 if (!ctx)
     throw new Error("Canvas 2D context not supported");
-// Модальное окно
+let chart = null;
+function renderChart() {
+    const series = vm.getSeries();
+    const data = series.xs.map((x, i) => ({ x, y: series.ys[i] }));
+    if (!chart) {
+        chart = new auto_1.default(ctx, {
+            type: "line",
+            data: {
+                datasets: [
+                    {
+                        label: "y(x)",
+                        data,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.15
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                parsing: false,
+                scales: {
+                    x: { type: "linear", title: { display: true, text: "x" } },
+                    y: { title: { display: true, text: "y" } }
+                }
+            }
+        });
+        return;
+    }
+    chart.data.datasets[0].data = data;
+    chart.update();
+}
 const modalBackdrop = document.getElementById("modalBackdrop");
 const modal = document.getElementById("modal");
 const modalAmp = document.getElementById("modalAmp");
@@ -41,7 +74,7 @@ const modalOk = document.getElementById("modalOk");
 const modalCancel = document.getElementById("modalCancel");
 const modalPreview = document.getElementById("modalPreview");
 const tableBody = document.querySelector("#dataTable tbody");
-/** ====== Вспомогательные функции ====== */
+/* Вспомогательные функции */
 function toNumberSafe(value) {
     if (value.trim() === "")
         return null;
@@ -86,12 +119,11 @@ function updateModalPreview() {
     const absP = Math.abs(input.phase);
     modalPreview.textContent = `${input.amplitude}*${fn}(${input.frequency}*x ${sign} ${absP})`;
 }
-/** ====== Обновление интерфейса (отрисовка) ====== */
+/* Обновление интерфейса (отрисовка) */
 function render() {
     renderList();
     renderEditor();
     renderChart();
-    // Таблицу обновляем всегда, но она может быть скрыта вкладкой
     renderTable();
 }
 function renderList() {
@@ -125,17 +157,12 @@ function renderEditor() {
         selectedLabel.textContent = "—";
         return;
     }
-    // Важно: не пересоздаём фокус при вводе — но для простоты просто выставляем значения.
     ampInput.value = String(selected.amplitude);
     freqInput.value = String(selected.frequency);
     phaseInput.value = String(selected.phase);
     sinRadio.checked = selected.kind === "sin";
     cosRadio.checked = selected.kind === "cos";
     selectedLabel.textContent = selected.toLabel();
-}
-function renderChart() {
-    const series = vm.getSeries();
-    drawSeriesOnCanvas(ctx, canvas, series.xs, series.ys);
 }
 function renderTable() {
     const series = vm.getSeries();
@@ -151,93 +178,12 @@ function renderTable() {
         tableBody.appendChild(tr);
     }
 }
-/** ====== Рисование на Canvas (без библиотек) ====== */
-function drawSeriesOnCanvas(ctx, canvas, xs, ys) {
-    const w = canvas.width;
-    const h = canvas.height;
-    // Фон
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = "#0f1116";
-    ctx.fillRect(0, 0, w, h);
-    // Отступы (поля) для области графика
-    const padL = 48;
-    const padR = 14;
-    const padT = 14;
-    const padB = 34;
-    const plotW = w - padL - padR;
-    const plotH = h - padT - padB;
-    // Диапазон по X
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
-    // Диапазон по Y
-    let minY = Math.min(...ys);
-    let maxY = Math.max(...ys);
-    if (minY === maxY) {
-        // Чтобы линия не была “в ноль”
-        minY -= 1;
-        maxY += 1;
-    }
-    // Немного расширим диапазон по Y
-    const yPad = (maxY - minY) * 0.08;
-    minY -= yPad;
-    maxY += yPad;
-    // Перевод координат (x,y) в пиксели Canvas
-    const xToPx = (x) => padL + ((x - minX) / (maxX - minX)) * plotW;
-    const yToPx = (y) => padT + (1 - (y - minY) / (maxY - minY)) * plotH;
-    // Сетка + оси
-    ctx.strokeStyle = "rgba(255,255,255,0.10)";
-    ctx.lineWidth = 1;
-    const gridCount = 8;
-    for (let i = 0; i <= gridCount; i++) {
-        const gx = padL + (plotW * i) / gridCount;
-        ctx.beginPath();
-        ctx.moveTo(gx, padT);
-        ctx.lineTo(gx, padT + plotH);
-        ctx.stroke();
-    }
-    for (let i = 0; i <= gridCount; i++) {
-        const gy = padT + (plotH * i) / gridCount;
-        ctx.beginPath();
-        ctx.moveTo(padL, gy);
-        ctx.lineTo(padL + plotW, gy);
-        ctx.stroke();
-    }
-    // Линия оси y=0, если она попадает в диапазон
-    if (minY <= 0 && 0 <= maxY) {
-        ctx.strokeStyle = "rgba(255,255,255,0.22)";
-        ctx.beginPath();
-        ctx.moveTo(padL, yToPx(0));
-        ctx.lineTo(padL + plotW, yToPx(0));
-        ctx.stroke();
-    }
-    // Рисуем ломаную (график)
-    ctx.strokeStyle = "#7aa2f7";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (let i = 0; i < xs.length; i++) {
-        const px = xToPx(xs[i]);
-        const py = yToPx(ys[i]);
-        if (i === 0)
-            ctx.moveTo(px, py);
-        else
-            ctx.lineTo(px, py);
-    }
-    ctx.stroke();
-    // Подписи
-    ctx.fillStyle = "rgba(232,238,247,0.85)";
-    ctx.font = "12px system-ui, Segoe UI, Arial";
-    ctx.fillText(`x: ${minX}..${maxX}`, padL, h - 12);
-    ctx.fillText(`y: ${minY.toFixed(2)}..${maxY.toFixed(2)}`, padL + 120, h - 12);
-}
-/** ====== Связывание UI и логики (обработчики событий) ====== */
-// Авто-обновление интерфейса при любых изменениях во ViewModel
+/* Связывание UI и логики (обработчики событий) */
 vm.on("changed", render);
-// Выбор гармоники в списке
 harmonicsList.addEventListener("change", () => {
     const id = harmonicsList.value || null;
     vm.select(id);
 });
-// “Живое” редактирование выбранной гармоники
 ampInput.addEventListener("input", () => {
     const n = toNumberSafe(ampInput.value);
     if (n === null)
@@ -266,13 +212,10 @@ cosRadio.addEventListener("change", () => {
         return;
     vm.updateSelected({ kind: "cos" });
 });
-// Кнопки
 addBtn.addEventListener("click", () => openModal());
 deleteBtn.addEventListener("click", () => vm.deleteSelected());
-// Вкладки
 tabChart.addEventListener("click", () => setActiveTab("chart"));
 tabTable.addEventListener("click", () => setActiveTab("table"));
-// Логика модального окна
 modalBackdrop.addEventListener("click", closeModal);
 modalCancel.addEventListener("click", closeModal);
 modalOk.addEventListener("click", () => {
@@ -287,6 +230,5 @@ modalFreq.addEventListener("input", updateModalPreview);
 modalPhase.addEventListener("input", updateModalPreview);
 modalSin.addEventListener("change", updateModalPreview);
 modalCos.addEventListener("change", updateModalPreview);
-// Первичная инициализация
 setActiveTab("chart");
 render();

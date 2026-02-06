@@ -3,7 +3,6 @@ import { HarmonicInput, HarmonicKind } from "./types";
 export class Harmonic {
   public readonly id: string;
 
-  // приватные поля (нельзя обратиться снаружи: h.amplitude -> ошибка компиляции)
   private amplitude_: number;
   private frequency_: number;
   private phase_: number;
@@ -17,7 +16,6 @@ export class Harmonic {
     this.kind_ = input.kind;
   }
 
-  // геттеры (чтение разрешено)
   get amplitude(): number { 
     return this.amplitude_; 
   }

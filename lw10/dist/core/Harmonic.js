@@ -9,7 +9,6 @@ class Harmonic {
         this.phase_ = input.phase;
         this.kind_ = input.kind;
     }
-    // геттеры (чтение разрешено)
     get amplitude() {
         return this.amplitude_;
     }

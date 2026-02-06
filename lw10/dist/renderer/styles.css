@@ -97,13 +97,20 @@ input[type="number"] {
 .view { display: none; height: 100%; }
 .view.active { display: block; }
 
-#chartCanvas {
-  width: 100%;
-  height: auto;
+.chart-wrap{
+  position: relative;
+  height: 420px;
+}
+
+#chartCanvas{
+  width: 100% !important;
+  height: 100% !important;
+  display: block;           /* убирает “лишнюю” высоту как у inline */
   border-radius: 10px;
   border: 1px solid var(--border);
   background: #0f1116;
 }
+
 
 .small { color: var(--muted); font-size: 12px; margin-top: 8px; }
 

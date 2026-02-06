@@ -30,7 +30,7 @@ export class HarmonicsModel extends EventEmitter {
 
     h.update(patch);
 
-    this.emit("changed");
+    this.emit("changed");//супер подробные тесты
   }
 
   sumAt(x: number): number {

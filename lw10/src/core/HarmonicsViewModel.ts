@@ -13,7 +13,6 @@ export class HarmonicsViewModel extends EventEmitter {
   private readonly model: HarmonicsModel;
   private selectedId: string | null = null;
 
-  // параметры серии (можно сделать настраиваемыми, но для задания достаточно фиксированных)
   private xFrom = 0;
   private xTo = 5;
   private step = 0.05;
@@ -22,9 +21,7 @@ export class HarmonicsViewModel extends EventEmitter {
     super();
     this.model = model;
 
-    // пробрасываем изменения модели наружу
     this.model.on("changed", () => {
-      // если удалили выбранную — сбросим selection
       if (this.selectedId && !this.model.list().some(h => h.id === this.selectedId)) {
         this.selectedId = null;
       }
@@ -32,7 +29,6 @@ export class HarmonicsViewModel extends EventEmitter {
     });
   }
 
-  // ======= данные для View =======
 
   getHarmonics(): Harmonic[] {
     return this.model.list();
@@ -47,7 +43,7 @@ export class HarmonicsViewModel extends EventEmitter {
     return this.model.buildSeries(this.xFrom, this.xTo, this.step);
   }
 
-  // ======= действия пользователя (Commands) =======
+  //действия пользователя (Commands) 
 
   select(id: string | null): void {
     this.selectedId = id;
