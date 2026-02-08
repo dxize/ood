@@ -13,8 +13,8 @@ void PrintUsage()
         "  --compress          RLE compress on write\n"
         "  --decompress        RLE decompress on read\n\n"
         "Examples:\n"
-        "  transform --encrypt 3 --encrypt 100500 --compress input.dat output.dat\n"
-        "  transform --decompress --decrypt 100500 --decrypt 3 output.dat input.dat.restored\n";
+        "  transform --encrypt 3 --encrypt 100500 --compress orig1.gif output.dat\n"
+        "  transform --decompress --decrypt 100500 --decrypt 3 output.dat restoredOrig1.gif\n";
 }
 
 static uint32_t ParseKey(const std::string& s) 
@@ -35,7 +35,7 @@ static uint32_t ParseKey(const std::string& s)
         throw std::invalid_argument("Invalid key: " + s);
     }
 
-    if (v > 0xFFFFFFFFull)
+    if (v > 0xFFFFFFFFull)//v > uint32_t
     {
         throw std::invalid_argument("Key out of range: " + s);
     }

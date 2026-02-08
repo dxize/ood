@@ -40,8 +40,9 @@ namespace
     {
         std::unique_ptr<IOutputDataStream> out = std::make_unique<FileOutputStream>(cfg.outputPath);
 
-        for (auto it = cfg.outputSteps.rbegin(); it != cfg.outputSteps.rend(); ++it) {
-            const auto& st = *it;
+        for (auto it = cfg.outputSteps.rbegin(); it != cfg.outputSteps.rend(); ++it) 
+        {
+            const auto& st = *it;   
             switch (st.kind) 
             {
             case StepKind::Compress:
