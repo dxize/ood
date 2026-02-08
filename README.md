@@ -1,3 +1,3 @@
 # ood
 
-[сами задания](https://github.com/alexey-malov)
+[Сами Задания](https://github.com/alexey-malov/ood)
