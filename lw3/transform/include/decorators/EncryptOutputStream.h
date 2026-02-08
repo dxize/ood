@@ -3,7 +3,8 @@
 #include <array>
 #include <cstdint>
 
-class EncryptOutputStream final : public OutputStreamDecorator {
+class EncryptOutputStream final : public OutputStreamDecorator 
+{
 public:
     EncryptOutputStream(std::unique_ptr<IOutputDataStream> inner, uint32_t key);
 

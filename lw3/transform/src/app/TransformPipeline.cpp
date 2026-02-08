@@ -11,9 +11,9 @@
 #include <array>
 #include <memory>
 
-namespace {
+namespace
+{
 
-    // 1) Сборка входного потока (декораторы применяются слева направо)
     std::unique_ptr<IInputDataStream> BuildInputStream(const CliConfig& cfg)
     {
         std::unique_ptr<IInputDataStream> in = std::make_unique<FileInputStream>(cfg.inputPath);
@@ -36,8 +36,6 @@ namespace {
         return in;
     }
 
-    // 2) Сборка выходного потока.
-    // Чтобы шаги применялись слева направо при записи — оборачиваем в обратном порядке.
     std::unique_ptr<IOutputDataStream> BuildOutputStream(const CliConfig& cfg)
     {
         std::unique_ptr<IOutputDataStream> out = std::make_unique<FileOutputStream>(cfg.outputPath);
@@ -53,7 +51,6 @@ namespace {
                 out = std::make_unique<EncryptOutputStream>(std::move(out), st.key);
                 break;
             default:
-                // На выходе ожидаем только Compress/Encrypt
                 break;
             }
         }
@@ -61,7 +58,6 @@ namespace {
         return out;
     }
 
-    // 3) Копирование данных блоками
     void CopyStream(IInputDataStream& in, IOutputDataStream& out)
     {
         std::array<uint8_t, 8192> buf{};

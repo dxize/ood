@@ -3,7 +3,8 @@
 #include <array>
 #include <cstdint>
 
-class DecryptInputStream final : public InputStreamDecorator {
+class DecryptInputStream final : public InputStreamDecorator 
+{
 public:
     DecryptInputStream(std::unique_ptr<IInputDataStream> inner, uint32_t key);
 

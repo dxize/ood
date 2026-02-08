@@ -3,7 +3,8 @@
 #include <cstddef>
 #include <vector>
 
-class MemoryInputStream final : public IInputDataStream {
+class MemoryInputStream final : public IInputDataStream 
+{
 public:
     explicit MemoryInputStream(std::vector<uint8_t> data);
 
